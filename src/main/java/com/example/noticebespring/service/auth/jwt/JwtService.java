@@ -10,6 +10,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Queue;
 
+// JWT 토큰 발급 및 검증을 담당
 @Service
 public class JwtService {
     private final SecretKeyManager secretKeyManager;

@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public abstract class AbstractUserService implements SocialUserService {
+public abstract class AbstractUserInfoService implements SocialUserInfoService {
     protected final UserRepository userRepository;
     protected final SocialAccountRepository socialAccountRepository;
     protected final SocialProviderFactory providerFactory;
@@ -33,7 +33,7 @@ public abstract class AbstractUserService implements SocialUserService {
     protected String provider;
 
     @Transactional
-    @Override
+    @Override   // 액세스 토큰으로 사용자 정보 처리
     public User processUser(String accessToken) {
         SocialConfig.Provider config = providerFactory.getProviderConfig(provider);
 

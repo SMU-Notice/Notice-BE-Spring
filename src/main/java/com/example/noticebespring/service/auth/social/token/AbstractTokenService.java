@@ -25,8 +25,8 @@ public abstract class AbstractTokenService implements SocialTokenService {
     protected String provider;
 
 
-    @Override
-    public String getToken(String code, String state) {
+    @Override       
+    public String getToken(String code, String state) { // 인가 코드로 액세스 토큰 반환
         SocialConfig.Provider config = socialProviderFactory.getProviderConfig(provider);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 

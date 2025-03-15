@@ -5,14 +5,13 @@ import com.example.noticebespring.repository.SocialAccountRepository;
 import com.example.noticebespring.repository.UserRepository;
 import com.example.noticebespring.service.auth.social.SocialProviderFactory;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 @Service
-public class GoogleUserService extends AbstractUserService{
+public class GoogleUserInfoService extends AbstractUserInfoService {
 
-    public GoogleUserService(UserRepository userRepository, SocialAccountRepository socialAccountRepository, SocialProviderFactory providerFactory, RestClient restClient) {
+    public GoogleUserInfoService(UserRepository userRepository, SocialAccountRepository socialAccountRepository, SocialProviderFactory providerFactory, RestClient restClient) {
         super(userRepository, socialAccountRepository, providerFactory, restClient);
         setProvider("google");
     }
