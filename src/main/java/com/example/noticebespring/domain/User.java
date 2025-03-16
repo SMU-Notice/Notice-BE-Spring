@@ -38,5 +38,4 @@ public class User {
         this.major = major;
         this.createdAt = createdAt;
     }
-
 }

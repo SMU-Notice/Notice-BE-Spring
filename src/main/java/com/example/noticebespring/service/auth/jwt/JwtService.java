@@ -25,7 +25,6 @@ public class JwtService {
         Key key = secretKeyManager.getCurrentKey();
         return Jwts.builder()
                 .subject(String.valueOf(userId))
-                .claim("email", email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(key)
@@ -80,15 +79,5 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
         return Integer.valueOf(claims.getSubject());
-    }
-
-    public String extractEmail(String token) {
-        Key key = secretKeyManager.getCurrentKey();
-        Claims claims = Jwts.parser()
-                .verifyWith((SecretKey) key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return claims.get("email", String.class);
     }
 }

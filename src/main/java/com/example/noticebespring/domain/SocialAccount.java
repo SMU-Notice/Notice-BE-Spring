@@ -36,5 +36,5 @@ public class SocialAccount {
         this.provider = provider;
         this.providerId = providerId;
     }
-
 }
+
