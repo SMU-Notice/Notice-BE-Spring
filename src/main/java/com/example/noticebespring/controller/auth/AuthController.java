@@ -46,19 +46,20 @@ public class AuthController {
             //2. 액세스 토큰 발급
             String accessToken = socialTokenService.getToken(code, state);
             if (accessToken == null || accessToken.isEmpty()){
-                return ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+
+                return ApiResponse.fail(ErrorCode.UNAUTHORIZED);
             }
 
             //3. 사용자 정보 처리
             User user = socialUserInfoService.processUser(accessToken);
             if(user == null){
-                return ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+                return ApiResponse.fail(ErrorCode.NOT_FOUND_USER);
             }
 
             //4. JWT 토큰 발급
             String jwtToken = jwtService.generateToken(user.getId(), user.getEmail());
             if (jwtToken == null || jwtToken.isEmpty()){
-                return ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+                return ApiResponse.fail(ErrorCode.JWT_GENERATION_FAILED);
             }
 
             return ApiResponse.ok(jwtToken);
@@ -70,7 +71,7 @@ public class AuthController {
     public ApiResponse<Void> logout(HttpServletRequest request) {
         String token = jwtService.extractToken(request); // JWT 토큰 추출 로직
         if (token == null || !jwtService.isTokenValid(token)) {
-            return ApiResponse.fail(ErrorCode.UNAUTHORIZED);
+            return ApiResponse.fail(ErrorCode.JWT_TOKEN_ERROR);
         }
         // 클라이언트가 알아서 토큰을 삭제하도록
         SecurityContextHolder.clearContext();
@@ -83,12 +84,12 @@ public class AuthController {
     public ApiResponse<Void> withdraw(HttpServletRequest request) {
         String token = jwtService.extractToken(request);
         if (token == null || !jwtService.isTokenValid(token)) {
-            return ApiResponse.fail(ErrorCode.UNAUTHORIZED);
+            return ApiResponse.fail(ErrorCode.JWT_TOKEN_ERROR);
         }
 
         Integer userId = jwtService.extractUserId(token);
         if (userId == null) {
-            return ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+            return ApiResponse.fail(ErrorCode.NOT_FOUND_USER);
         }
 
         try {
