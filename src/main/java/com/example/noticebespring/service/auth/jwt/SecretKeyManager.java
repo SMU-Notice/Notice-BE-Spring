@@ -26,10 +26,10 @@ public class SecretKeyManager {
     private static final int MAX_PREVIOUS_KEYS = 2;
 
     @Getter
-    private Key currentKey;
+    private SecretKey currentKey;
 
     @Getter
-    private final Queue<Key> previousKeys = new LinkedList<>();
+    private final Queue<SecretKey> previousKeys = new LinkedList<>();
     // 이전 키 관리
 
     @PostConstruct
@@ -45,7 +45,7 @@ public class SecretKeyManager {
     //@Scheduled: 지정된 주기마다 자동으로 실행 (7일)
     @Scheduled(fixedRate = 604800000)
     public void rotateKey(){
-        Key oldKey = currentKey;
+        SecretKey oldKey = currentKey;
         byte[] keyBytes = new byte[KEY_LENGTH_BYTES];
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.nextBytes(keyBytes);
@@ -58,10 +58,10 @@ public class SecretKeyManager {
         log.info("비밀 키가 교체되었습니다: " + new Date());
     }
 
-    public boolean validateToken(String token, Key key){
+    public boolean validateToken(String token, SecretKey key){
         try{
             Jwts.parser().
-                    verifyWith((SecretKey) key).
+                    verifyWith(key).
                     build().
                     parseSignedClaims(token)
                     .getPayload();
@@ -75,7 +75,8 @@ public class SecretKeyManager {
         if (validateToken(token, currentKey)){
             return true;
         }
-        for (Key prekey : previousKeys){
+
+        for (SecretKey prekey : previousKeys){
             if(validateToken(token, prekey)){
                 return true;
             }

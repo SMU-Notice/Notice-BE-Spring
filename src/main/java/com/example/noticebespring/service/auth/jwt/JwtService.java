@@ -22,7 +22,7 @@ public class JwtService {
     }
 
     public String generateToken(Integer userId, String email){
-        Key key = secretKeyManager.getCurrentKey();
+        SecretKey key = secretKeyManager.getCurrentKey();
         return Jwts.builder()
                 .subject(String.valueOf(userId))
                 .issuedAt(new Date())
@@ -32,8 +32,8 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token){
-        Key currentKey = secretKeyManager.getCurrentKey();
-        Queue<Key> previousKeys = secretKeyManager.getPreviousKeys();
+        SecretKey currentKey = secretKeyManager.getCurrentKey();
+        Queue<SecretKey> previousKeys = secretKeyManager.getPreviousKeys();
 
         // 현재키로 유효성 검증
         if (isTokenValidWithKey(token, currentKey)){
@@ -41,19 +41,19 @@ public class JwtService {
         }
 
         //이전키로 유효성 검증
-        for (Key prekey : previousKeys){
+        for (SecretKey prekey : previousKeys){
             if (isTokenValidWithKey(token, prekey)){
                 return true;
             }
         }
-
         return false;
     }
 
-    private boolean isTokenValidWithKey(String token, Key key){
+
+    private boolean isTokenValidWithKey(String token, SecretKey key){
         try {
             Jwts.parser()
-                    .verifyWith((SecretKey) key)
+                    .verifyWith(key)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
@@ -72,9 +72,9 @@ public class JwtService {
     }
 
     public Integer extractUserId(String token) {
-        Key key = secretKeyManager.getCurrentKey();
+        SecretKey key = secretKeyManager.getCurrentKey();
         Claims claims = Jwts.parser()
-                .verifyWith((SecretKey) key)
+                .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
