@@ -30,6 +30,8 @@ public class SecurityConfig {
                 .logout(log -> log.disable())// HTTP Basic 인증 비활성화
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/api/auth/**").permitAll()
+
+
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/api/v1").permitAll()
                         .anyRequest().authenticated()
@@ -38,8 +40,6 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 );
-
-
 
         return http.build();
     }
