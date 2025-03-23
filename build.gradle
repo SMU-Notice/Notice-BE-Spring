@@ -18,6 +18,14 @@ repositories {
 	mavenCentral()
 }
 
+// JAR 파일 이름 설정
+jar {
+	archiveBaseName.set('Notice-BE-Spring')  // 기본 이름 설정
+	archiveVersion.set('0.0.1-SNAPSHOT')  // 버전 설정
+	archiveClassifier.set('')  // 별칭을 설정하지 않음
+}
+
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -42,6 +50,7 @@ dependencies {
 
 	//SwaggerUI
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+
 	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -56,6 +65,10 @@ dependencies {
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//AWS Parameter Store
+	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

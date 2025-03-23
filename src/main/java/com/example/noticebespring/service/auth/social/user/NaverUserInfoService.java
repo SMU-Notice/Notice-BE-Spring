@@ -1,6 +1,6 @@
 package com.example.noticebespring.service.auth.social.user;
 
-import com.example.noticebespring.domain.SocialAccount;
+import com.example.noticebespring.entity.SocialAccount;
 import com.example.noticebespring.repository.SocialAccountRepository;
 import com.example.noticebespring.repository.UserRepository;
 import com.example.noticebespring.service.auth.social.SocialProviderFactory;

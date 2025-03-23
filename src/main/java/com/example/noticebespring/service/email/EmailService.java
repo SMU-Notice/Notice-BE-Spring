@@ -1,4 +1,4 @@
-package com.example.noticebespring.service;
+package com.example.noticebespring.service.email;
 
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
@@ -7,6 +7,7 @@ import com.example.noticebespring.dto.email.EmailDto;
 import com.example.noticebespring.dto.email.EmailVerificationDto;
 import com.example.noticebespring.repository.UserRepository;
 import com.example.noticebespring.entity.User;
+import com.example.noticebespring.service.auth.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -27,6 +28,7 @@ public class EmailService {
     private final RedisUtil redisUtil;
     private final UserRepository userRepository;
     private final TemplateEngine templateEngine;
+    private final UserService userService;
     private static final String senderEmail = "jj@naver.com";
 
     /**
@@ -111,6 +113,7 @@ public class EmailService {
      * @param emailDto
      * @return
      */
+    @Transactional
     public Boolean verifyEmailCode(EmailVerificationDto emailDto) {
         String purpose = "verify";
         String email = emailDto.email();
@@ -127,29 +130,12 @@ public class EmailService {
             throw new CustomException(ErrorCode.INVALID_VERIFY_CODE); // 유효하지 않은 코드
         }
 
-        // jwt 토큰으로 사용자 존재하는지 확인 ?!
-        Optional<User> optionalUser = userRepository.findById(id);
+        // 인증된 유저 조회
+        User user = userService.getAuthenticatedUser();
+        // 이메일 업데이트
+        user.setEmail(email);  // 기존 유저의 이메일 수정
+        userRepository.save(user);  // 유저 정보 업데이트
 
-        if (!optionalUser.isPresent()) {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER); // 사용자 정보 없음
-        }
-
-        User user = optionalUser.get();
-        // 유저가 존재하면 이메일을 업데이트하고 저장
-
-        // 이메일 생성 혹은 수정 ?!!!!!!!!!!!!!!
-        try {
-            User userToSave = User.builder()
-                    .email(email)  // 이메일을 설정
-                    .build();
-            userRepository.save(userToSave);
-        } catch (Exception e) {
-            // 사용자 저장 중 오류가 발생한 경우
-            log.error("Failed to enable user with email: {}", email, e);
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR); // 내부 서버 오류
-        }
-
-        // 성공적으로 활성화 처리된 경우
         return true;
     }
 

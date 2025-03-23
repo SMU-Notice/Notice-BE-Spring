@@ -1,5 +1,6 @@
-package com.example.noticebespring.domain;
+package com.example.noticebespring.entity;
 
+import com.example.noticebespring.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class SocialAccount {
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private com.example.noticebespring.entity.User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider", nullable = false)

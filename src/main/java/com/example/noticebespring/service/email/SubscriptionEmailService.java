@@ -1,4 +1,4 @@
-package com.example.noticebespring.service;
+package com.example.noticebespring.service.email;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

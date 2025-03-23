@@ -1,6 +1,6 @@
 package com.example.noticebespring.controller.auth;
 
-import com.example.noticebespring.domain.User;
+import com.example.noticebespring.entity.User;
 import com.example.noticebespring.repository.SocialAccountRepository;
 import com.example.noticebespring.repository.UserRepository;
 import com.example.noticebespring.service.auth.jwt.JwtService;

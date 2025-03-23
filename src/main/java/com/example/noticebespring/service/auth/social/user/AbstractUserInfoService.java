@@ -1,8 +1,8 @@
 package com.example.noticebespring.service.auth.social.user;
 
 import com.example.noticebespring.common.config.SocialConfig;
-import com.example.noticebespring.domain.User;
-import com.example.noticebespring.domain.SocialAccount;
+import com.example.noticebespring.entity.User;
+import com.example.noticebespring.entity.SocialAccount;
 import com.example.noticebespring.repository.SocialAccountRepository;
 import com.example.noticebespring.repository.UserRepository;
 import com.example.noticebespring.service.auth.social.SocialProviderFactory;
@@ -58,7 +58,10 @@ public abstract class AbstractUserInfoService implements SocialUserInfoService {
             }
 
             //2. 신규 사용자일 경우 -> 새로운 소셜 계정 생성 및 회원가입 처리
-            User user = new User(email, null, LocalDateTime.now());
+            User user = User.builder()
+                    .email(email)
+                    .build();
+
             user = userRepository.save(user);
 
             SocialAccount socialAccount = new SocialAccount(user, getProviderType(), providerId);
