@@ -17,9 +17,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Setter
     @Column(nullable = false, length = 255, unique = true)
     private String email;  // 이메일 (고유 값)
 
+    @Setter
     @Column(length = 30)
     private String major;  // 전공
 
@@ -29,14 +31,5 @@ public class User {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now(); // 생성 시 자동 설정
-    }
-
-    // email과 major에 대해서만 set 메서드 추가
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setMajor(String major) {
-        this.major = major;
     }
 }

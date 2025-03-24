@@ -1,15 +1,16 @@
 package com.example.noticebespring.entity;
 
-import com.example.noticebespring.entity.User;
+
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "social_account")
 @NoArgsConstructor
+@AllArgsConstructor
+
 public class SocialAccount {
 
     @Id
@@ -19,7 +20,7 @@ public class SocialAccount {
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private com.example.noticebespring.entity.User user;
+    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider", nullable = false)
@@ -30,12 +31,6 @@ public class SocialAccount {
 
     public enum Provider {
         GOOGLE, KAKAO, NAVER
-    }
-
-    public SocialAccount(User user, Provider provider, String providerId) {
-        this.user = user;
-        this.provider = provider;
-        this.providerId = providerId;
     }
 }
 

@@ -4,13 +4,16 @@ import com.example.noticebespring.common.filter.JwtAuthenticationEntryPoint;
 import com.example.noticebespring.common.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 import java.util.List;
 
@@ -27,14 +30,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
-                .formLogin(form -> form.disable()) // 폼 로그인 비활성화 (소셜 로그인만 사용)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
-                .logout(log -> log.disable())// HTTP Basic 인증 비활성화
+                .logout(log -> log.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/", "/api/auth/**").permitAll()
 
 
@@ -42,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, LogoutFilter.class)
+                .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 );
@@ -52,8 +56,20 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        return createCorsConfigurationSource();
+    }
+
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        CorsFilter filter = new CorsFilter(createCorsConfigurationSource());
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(filter);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
+
+    private CorsConfigurationSource createCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // 허용할 도메인
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -61,6 +77,7 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        System.out.println("CORS Configuration applied: " + configuration.getAllowedOrigins());
         return source;
     }
 }

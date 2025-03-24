@@ -60,11 +60,18 @@ public abstract class AbstractUserInfoService implements SocialUserInfoService {
             //2. 신규 사용자일 경우 -> 새로운 소셜 계정 생성 및 회원가입 처리
             User user = User.builder()
                     .email(email)
+                    .createdAt(LocalDateTime.now())
                     .build();
-
             user = userRepository.save(user);
 
-            SocialAccount socialAccount = new SocialAccount(user, getProviderType(), providerId);
+
+
+            SocialAccount socialAccount = SocialAccount.builder()
+                    .user(user)
+                    .provider(getProviderType())
+                    .providerId(providerId)
+                    .build();
+
             socialAccountRepository.save(socialAccount);
 
             return user;

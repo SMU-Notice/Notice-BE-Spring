@@ -29,8 +29,6 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
 
-
-
     /**
      * 인증된 사용자 정보를 SecurityContext에서 가져옵니다.
      *
