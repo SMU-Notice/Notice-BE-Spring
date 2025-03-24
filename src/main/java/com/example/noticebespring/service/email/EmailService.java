@@ -65,8 +65,8 @@ public class EmailService {
      * 이메일 폼 생성
      * @param emailDto
      * @return
-     * @throws MessagingException */
-
+     * @throws MessagingException
+     */
     private MimeMessage createEmailForm(EmailDto emailDto, String authCode) throws MessagingException {
 
         String email = emailDto.email();
@@ -84,8 +84,8 @@ public class EmailService {
     /**
      * 인증코드가 담긴 이메일 송신
      * @param emailDto
-     * @throws MessagingException */
-
+     * @throws MessagingException
+     */
     public void sendEmail(EmailDto emailDto) throws MessagingException {
         String toEmail = emailDto.email();
         String purpose = "verify";

@@ -46,9 +46,9 @@ public class JwtService {
                 return true;
             }
         }
-
         return false;
     }
+
 
     private boolean isTokenValidWithKey(String token, SecretKey key){
         try {

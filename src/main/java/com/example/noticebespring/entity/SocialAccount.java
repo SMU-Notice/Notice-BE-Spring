@@ -1,5 +1,6 @@
 package com.example.noticebespring.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import lombok.*;
 @Table(name = "social_account")
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class SocialAccount {
 
     @Id
@@ -30,6 +32,5 @@ public class SocialAccount {
     public enum Provider {
         GOOGLE, KAKAO, NAVER
     }
-
 }
 

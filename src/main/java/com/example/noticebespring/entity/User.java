@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
-@Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "user")
 public class User {
 
     @Id
@@ -32,5 +32,4 @@ public class User {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now(); // 생성 시 자동 설정
     }
-
 }

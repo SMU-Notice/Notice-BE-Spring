@@ -75,6 +75,7 @@ public class SecretKeyManager {
         if (validateToken(token, currentKey)){
             return true;
         }
+
         for (SecretKey prekey : previousKeys){
             if(validateToken(token, prekey)){
                 return true;
