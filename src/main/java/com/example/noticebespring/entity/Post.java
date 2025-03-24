@@ -1,14 +1,15 @@
-package com.example.noticebespring.domain;
+package com.example.noticebespring.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "post")
+@Builder
 @Getter
 public class Post {
 
@@ -33,12 +34,14 @@ public class Post {
     private String contentSummary;
 
     @Column(name = "view_count", nullable = false)
+    @Builder.Default
     private Integer viewCount = 0;
 
     @Column(name = "url", nullable = false)
     private String url;
 
     @Column(name = "has_reference", nullable = false)
+    @Builder.Default
     private Boolean hasReference = false;
 
     @Column(name = "posted_date", nullable = false)

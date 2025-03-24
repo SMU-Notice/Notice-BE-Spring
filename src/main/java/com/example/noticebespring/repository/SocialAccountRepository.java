@@ -1,6 +1,6 @@
 package com.example.noticebespring.repository;
 
-import com.example.noticebespring.domain.SocialAccount;
+import com.example.noticebespring.entity.SocialAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

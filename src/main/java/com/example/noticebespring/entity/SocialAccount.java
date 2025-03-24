@@ -1,14 +1,14 @@
-package com.example.noticebespring.domain;
+package com.example.noticebespring.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "social_account")
 @NoArgsConstructor
+@AllArgsConstructor
 public class SocialAccount {
 
     @Id
@@ -31,10 +31,5 @@ public class SocialAccount {
         GOOGLE, KAKAO, NAVER
     }
 
-    public SocialAccount(User user, Provider provider, String providerId) {
-        this.user = user;
-        this.provider = provider;
-        this.providerId = providerId;
-    }
 }
 

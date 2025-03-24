@@ -1,4 +1,4 @@
-package com.example.noticebespring.filter;
+package com.example.noticebespring.common.filter;
 
 import com.example.noticebespring.service.auth.jwt.JwtService;
 import com.example.noticebespring.common.response.CustomException;

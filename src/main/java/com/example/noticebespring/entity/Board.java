@@ -1,6 +1,7 @@
-package com.example.noticebespring.domain;
+package com.example.noticebespring.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "board")
 public class Board {
 
@@ -32,6 +34,7 @@ public class Board {
     }
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
 

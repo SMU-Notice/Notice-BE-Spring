@@ -1,4 +1,4 @@
-package com.example.noticebespring.filter;
+package com.example.noticebespring.common.filter;
 
 import com.example.noticebespring.common.response.ApiResponse;
 import com.example.noticebespring.common.response.ErrorCode;
@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 // JWT 토큰 검증 후에 예외 발생시 실행
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {

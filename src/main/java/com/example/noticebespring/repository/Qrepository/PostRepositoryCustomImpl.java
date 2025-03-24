@@ -1,7 +1,7 @@
 package com.example.noticebespring.repository.Qrepository;
 
-import com.example.noticebespring.domain.QBoard;
-import com.example.noticebespring.domain.QPost;
+import com.example.noticebespring.entity.QBoard;
+import com.example.noticebespring.entity.QPost;
 import com.example.noticebespring.dto.TopViewDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
