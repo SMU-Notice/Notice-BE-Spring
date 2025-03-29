@@ -1,6 +1,6 @@
 package com.example.noticebespring.common.filter;
 
-import com.example.noticebespring.common.response.ApiResponse;
+import com.example.noticebespring.common.response.CommonResponse;
 import com.example.noticebespring.common.response.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -28,7 +28,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         log.warn("Unauthorized access attempt to {}", request.getRequestURI());
 
-        ApiResponse<?> apiResponse = ApiResponse.fail(ErrorCode.UNAUTHORIZED);
+        CommonResponse<?> apiResponse = CommonResponse.fail(ErrorCode.UNAUTHORIZED);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         objectMapper.writeValue(response.getWriter(), apiResponse);

@@ -3,17 +3,15 @@ package com.example.noticebespring.repository;
 import com.example.noticebespring.entity.BoardSubscription;
 import com.example.noticebespring.entity.BoardSubscriptionId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface BoardSubscriptionRepository extends JpaRepository<BoardSubscription, BoardSubscriptionId> {
 
+    @Query("SELECT b FROM BoardSubscription b WHERE b.user.id = :userId")
     List<BoardSubscription> findByUserId(Integer userId);
 
-    void deleteByUserIdAndBoardId(Integer userId, Integer boardId);
 
-    List<BoardSubscription> findByUserIdAndBoardId(Integer userId, Integer boardId);
 
-    // 1개 이상의 originalPostId로 검색
-    List<BoardSubscription> findByOriginalPostIdIn(List<Integer> originalPostIds);
 }
