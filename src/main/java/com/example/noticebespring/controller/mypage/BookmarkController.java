@@ -40,10 +40,41 @@ public class BookmarkController {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                    {
+                                        "success": true,
+                                        "data": [
+                                            {
+                                                "id": 1,
+                                                "name": "장학금",
+                                                "createdAt": "2025-03-30T12:34:56"
+                                            },
+                                            {
+                                                "id": 2,
+                                                "name": "수강신청",
+                                                "createdAt": "2025-03-30T12:35:00"
+                                            }
+                                        ],
+                                        "error": null
+                                    }
+                                """)
                             )
                     }),
-                    @ApiResponse(responseCode = "500", description = "북마크 폴더 목록 조회에 대한 내부 오류")
+                    @ApiResponse(responseCode = "500", description = "북마크 폴더 목록 조회에 대한 내부 오류", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "message": "서버 내부 오류"
+                                            }
+                                        }
+                                    """)
+                            )
+                    })
             },
             parameters = {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true)
@@ -70,10 +101,35 @@ public class BookmarkController {
                     @ApiResponse(responseCode = "200", description = "변경 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": true,
+                                            "data": {
+                                                "id": 3,
+                                                "name": "새 폴더",
+                                                "createdAt": "2025-03-30T12:36:00"
+                                            },
+                                            "error": null
+                                        }
+                                    """)
                             )
                     }),
-                    @ApiResponse(responseCode = "500", description = "북마크 폴더 생성에 대한 내부 오류")
+                    @ApiResponse(responseCode = "500", description = "북마크 폴더 생성에 대한 내부 오류", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "message": "서버 내부 오류"
+                                            }
+                                        }
+                                    """)
+                            )
+                    }
+                    )
             },
             parameters = {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true)
@@ -98,13 +154,81 @@ public class BookmarkController {
                     @ApiResponse(responseCode = "200", description = "변경 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": true,
+                                            "data": {
+                                                "id": 1,
+                                                "name": "새로운 폴더 이름",
+                                                "createdAt": "2025-03-30T12:36:00"
+                                            },
+                                            "error": null
+                                        }
+                                    """)
                             )
                     }),
-                    @ApiResponse(responseCode = "400", description = "폴더 이름이 중복됨"),
-                    @ApiResponse(responseCode = "403", description = "폴더 이름 변경에 대한 권한이 없음"),
-                    @ApiResponse(responseCode = "404", description = "folderId에 해당하는 폴더를 찾을 수 없음"),
-                    @ApiResponse(responseCode = "500", description = "북마크 폴더 이름 변경에 대한 내부 오류")
+                    @ApiResponse(responseCode = "400", description = "폴더 이름이 중복됨", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "INVALID_VERIFY_FOLDER_NAME",
+                                                "message": "폴더 이름이 중복됩니다."
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "403", description = "폴더 이름 변경에 대한 권한이 없음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "FORBIDDEN",
+                                                "message": "권한이 없습니다."
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "404", description = "folderId에 해당하는 폴더를 찾을 수 없음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "NOT_FOUND_FOLDER",
+                                                "message": "폴더를 찾을 수 없습니다."
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "500", description = "북마크 폴더 이름 변경에 대한 내부 오류", content ={
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "message": "서버 내부 오류"
+                                            }
+                                        }
+                                    """)
+                            )
+                    }
+
+                    )
             },
             parameters = {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true),
@@ -137,12 +261,60 @@ public class BookmarkController {
                     @ApiResponse(responseCode = "200", description = "삭제 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": true,
+                                            "data": null,
+                                            "error": null
+                                        }
+                                    """)
                             )
                     }),
-                    @ApiResponse(responseCode = "403", description = "폴더 삭제에 대한 권한이 없음"),
-                    @ApiResponse(responseCode = "404", description = "folderId에 해당하는 폴더를 찾을 수 없음"),
-                    @ApiResponse(responseCode = "500", description = "북마크 폴더 삭제에 대한 내부 오류")
+                    @ApiResponse(responseCode = "403", description = "폴더 삭제에 대한 권한이 없음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "FORBIDDEN",
+                                                "message": "권한이 없습니다."
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "404", description = "folderId에 해당하는 폴더를 찾을 수 없음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "NOT_FOUND_FOLDER",
+                                                "message": "폴더를 찾을 수 없습니다."
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "500", description = "북마크 폴더 삭제에 대한 내부 오류", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "message": "서버 내부 오류"
+                                            }
+                                        }
+                                    """)
+                            )
+                    })
             },
             parameters = {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true),
@@ -173,11 +345,56 @@ public class BookmarkController {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": true,
+                                            "data": [
+                                                {
+                                                    "postId": 1,
+                                                    "postTitle": "2차 수강신청",
+                                                    "createdAt": "2025-03-30T12:34:56"
+                                                },
+                                                {
+                                                    "postId": 2,
+                                                    "postTitle": "장학금 안내",
+                                                    "createdAt": "2025-03-30T12:35:00"
+                                                }
+                                            ],
+                                            "error": null
+                                        }
+                                    """)
                             )
                     }),
-                    @ApiResponse(responseCode = "404", description = "folderId에 해당하는 폴더를 찾을 수 없음"),
-                    @ApiResponse(responseCode = "500", description = "북마크 폴더 삭제에 대한 내부 오류")
+                    @ApiResponse(responseCode = "404", description = "폴더가 존재하지 않음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "NOT_FOUND_FOLDER",
+                                                "message": "폴더를 찾을 수 없습니다."
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "500", description = "폴더 내 북마크된 게시물 조회에 대한 내부 오류", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "message": "서버 내부 오류"
+                                            }
+                                        }
+                                    """)
+                            )
+                    })
             },
             parameters = {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true),
