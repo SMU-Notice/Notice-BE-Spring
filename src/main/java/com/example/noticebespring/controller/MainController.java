@@ -94,7 +94,7 @@ public class MainController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "NOT_FOUND_POST",
+                                                "errorCode": "40402",
                                                 "message": "게시물을 찾을 수 없습니다."
                                             }
                                         }
@@ -109,8 +109,8 @@ public class MainController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INTERNAL_SERVER_ERROR",
-                                                "message": "서버 내부 오류"
+                                                "errorCode": "50000",
+                                                "message": "서버 내부 오류입니다."
                                             }
                                         }
                                     """)

@@ -68,7 +68,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "errorCode": "50000",
                                                 "message": "서버 내부 오류"
                                             }
                                         }
@@ -122,7 +122,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "errorCode": "50000",
                                                 "message": "서버 내부 오류"
                                             }
                                         }
@@ -175,7 +175,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INVALID_VERIFY_FOLDER_NAME",
+                                                "errorCode": "40004",
                                                 "message": "폴더 이름이 중복됩니다."
                                             }
                                         }
@@ -190,7 +190,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "FORBIDDEN",
+                                                "errorCode": "40300",
                                                 "message": "권한이 없습니다."
                                             }
                                         }
@@ -205,7 +205,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "NOT_FOUND_FOLDER",
+                                                "errorCode": "40405",
                                                 "message": "폴더를 찾을 수 없습니다."
                                             }
                                         }
@@ -220,7 +220,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "errorCode": "50000",
                                                 "message": "서버 내부 오류"
                                             }
                                         }
@@ -278,7 +278,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "FORBIDDEN",
+                                                "errorCode": "40300",
                                                 "message": "권한이 없습니다."
                                             }
                                         }
@@ -293,7 +293,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "NOT_FOUND_FOLDER",
+                                                "errorCode": "40405",
                                                 "message": "폴더를 찾을 수 없습니다."
                                             }
                                         }
@@ -308,7 +308,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "errorCode": "50000",
                                                 "message": "서버 내부 오류"
                                             }
                                         }
@@ -373,7 +373,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "NOT_FOUND_FOLDER",
+                                                "errorCode": "40405",
                                                 "message": "폴더를 찾을 수 없습니다."
                                             }
                                         }
@@ -388,7 +388,7 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "errorCode": "50000",
                                                 "message": "서버 내부 오류"
                                             }
                                         }
