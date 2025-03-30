@@ -64,8 +64,8 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "BAD_REQUEST",
-                                                "message": "해당 프로바이더에 대한 서비스가 존재하지 않음"
+                                                "errorCode": "40001",
+                                                "message": "지원하지 않는 소셜 제공자입니다"
                                             }
                                         }
                                     """)
@@ -79,14 +79,14 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "UNAUTHORIZED",
-                                                "message": "인증에 실패함"
+                                                "errorCode": "40101",
+                                                "message": "인증에 실패하였습니다. 재로그인 하세요"
                                             }
                                         }
                                     """)
                             )
                     }),
-                    @ApiResponse(responseCode = "404", description = "사용자 정보 등록 실패", content = {
+                    @ApiResponse(responseCode = "500", description = "사용자 정보 등록 실패", content = {
                             @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(example = """
@@ -94,8 +94,8 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "NOT_FOUND",
-                                                "message": "사용자 정보 등록 실패"
+                                                "errorCode": "50000",
+                                                "message": "서버 내부 오류입니다"
                                             }
                                         }
                                     """)
@@ -109,8 +109,8 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "JWT_GENERATION_FAILED",
-                                                "message": "JWT 토큰 발급에 실패함"
+                                                "errorCode": "50001",
+                                                "message": "JWT 발급에 실패했습니다"
                                             }
                                         }
                                     """)
@@ -184,7 +184,7 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "UNAUTHORIZED",
+                                                "errorCode": "40102",
                                                 "message": "JWT 토큰이 유효하지 않음"
                                             }
                                         }
@@ -229,7 +229,7 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "UNAUTHORIZED",
+                                                "errorCode": "40102",
                                                 "message": "JWT 토큰이 유효하지 않음"
                                             }
                                         }
@@ -244,7 +244,7 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "NOT_FOUND",
+                                                "errorCode": "40401",
                                                 "message": "사용자를 찾는데 실패함"
                                             }
                                         }
@@ -259,8 +259,8 @@ public class AuthController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "INTERNAL_SERVER_ERROR",
-                                                "message": "회원 탈퇴에 실패함"
+                                                "errorCode": "50000",
+                                                "message": "서버 내부 오류입니다"
                                             }
                                         }
                                     """)
