@@ -2,6 +2,7 @@ package com.example.noticebespring.service.auth;
 
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
+import com.example.noticebespring.dto.sneaky.UserRegisterDto;
 import com.example.noticebespring.entity.User;
 import com.example.noticebespring.service.auth.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.example.noticebespring.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -57,6 +59,28 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
     }
+
+    /**
+     * 사용자 회원가입
+     * @param userRegisterDto
+     * @return
+     */
+    @Transactional
+    public User createUser(UserRegisterDto userRegisterDto) {
+
+        User user = User.builder()
+                .email(userRegisterDto.email())
+                .build();
+
+        return userRepository.save(user);
+    }
+
+    // 이메일로 유저 찾기
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
+    }
+
 
 
 }

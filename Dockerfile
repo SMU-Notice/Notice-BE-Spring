@@ -21,12 +21,12 @@ WORKDIR /app
 # 변수 정의
 ARG JAR_FILE=build/libs/Notice-BE-Spring-0.0.1-SNAPSHOT.jar
 ARG YML_FILE=src/main/resources/application.yml
-ARG DEV_YML_FILE=src/main/resources/application-docker.yml
+ARG DEV_YML_FILE=src/main/resources/application-docker-test.yml
 #ARG PROD_YML_FILE=src/main/resources/application-prod.yml
 
 COPY --from=build /app/${JAR_FILE} app.jar
 COPY ${YML_FILE} /application.yml
-COPY ${DEV_YML_FILE} /application-docker.yml
+COPY ${DEV_YML_FILE} /application-docker-test.yml
 #COPY ${PROD_YML_FILE} /application-prod.yml
 
 # 시간 동기화
@@ -37,6 +37,6 @@ RUN apk add --no-cache tzdata \
 EXPOSE 8080
 
 # 로컬용
-ENTRYPOINT ["java", "-jar", "-Dspring.config.location=file:/application.yml", "-Dspring.profiles.active=docker", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.config.location=file:/application.yml", "-Dspring.profiles.active=docker-test", "/app/app.jar"]
 # production 프로파일을 활성화하여 실행
 #ENTRYPOINT ["java", "-jar", "-Dspring.config.location=file:/application-prod.yml", "-Dspring.profiles.active=prod", "/app/app.jar"]

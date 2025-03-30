@@ -1,5 +1,6 @@
 package com.example.noticebespring.controller.auth;
 
+import com.example.noticebespring.common.response.CommonResponse;
 import com.example.noticebespring.entity.User;
 import com.example.noticebespring.repository.SocialAccountRepository;
 import com.example.noticebespring.repository.UserRepository;
@@ -24,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 
 @Slf4j
 @RestController
@@ -73,6 +73,7 @@ public class AuthController {
             String accessToken = socialTokenService.getToken(code, state);
             if (accessToken == null || accessToken.isEmpty()){
                 log.warn("액세스 토큰 발급 실패 - provider: {}", provider);
+
                 return CommonResponse.fail(ErrorCode.UNAUTHORIZED);
             }
             log.debug("액세스 토큰 발급 성공 - provider: {}, token: {}", provider, accessToken);
@@ -145,6 +146,7 @@ public class AuthController {
     )
     @PostMapping("/withdraw")
     @Transactional // 트랜잭션 관리
+
     public CommonResponse<Void> withdraw() {
         log.info("회원 탈퇴 요청 수신");
         Integer userId = userService.getAuthenticatedUser().getId();
@@ -162,4 +164,5 @@ public class AuthController {
             throw new RuntimeException("회원 탈퇴에 실패했습니다: " + e.getMessage(), e);
         }
     }
+
 }

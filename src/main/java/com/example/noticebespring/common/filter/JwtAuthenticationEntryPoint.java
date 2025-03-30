@@ -36,6 +36,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         ErrorCode errorCode = getErrorCode(authException);
 
         CommonResponse<?> commonResponse = CommonResponse.fail(errorCode);
+
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         objectMapper.writeValue(response.getWriter(), commonResponse);

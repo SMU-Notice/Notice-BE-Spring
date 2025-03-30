@@ -18,6 +18,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
@@ -138,5 +140,59 @@ public class EmailService {
 
         return true;
     }
+
+
+    /**
+     * 새로운 게시물 알림 이메일 내용 초기화
+     * @param postName
+     * @param boardId
+     * @param postTypes
+     * @return
+     */
+    private String setNewPostNotificationEmailContext(String postName, Integer boardId, Map<String, List<Integer>> postTypes) {
+        Context context = new Context();
+        context.setVariable("postName", postName);  // 게시물 이름
+        context.setVariable("boardId", boardId);   // 게시판 ID
+        context.setVariable("postTypes", postTypes); // 게시물 타입과 ID를 템플릿에 전달
+
+        // Thymeleaf 템플릿 파일을 사용하여 HTML 생성
+        return templateEngine.process("new-post-notification-email", context);
+    }
+
+    /**
+     * 새로운 게시물 알림 이메일 폼 생성
+     * @param emailDto
+     * @param postName
+     * @param boardId
+     * @param postTypes
+     * @return
+     * @throws MessagingException
+     */
+    private MimeMessage createNewPostNotificationEmailForm(EmailDto emailDto, String postName, Integer boardId, Map<String, List<Integer>> postTypes) throws MessagingException {
+        String email = emailDto.email();
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        message.addRecipients(MimeMessage.RecipientType.TO, email);
+        message.setSubject("새로운 게시물이 등록되었습니다.");
+        message.setFrom(senderEmail);
+        message.setText(setNewPostNotificationEmailContext(postName, boardId, postTypes), "utf-8", "html");
+
+        return message;
+    }
+
+//    /**
+//     * 새로운 게시물 알림 이메일 송신
+//     * @param boardNewPostDto
+//     * @throws MessagingException
+//     */
+//    public void sendNewPostNotificationEmail(BoardNewPostDto boardNewPostDto) throws MessagingException {
+//        // 이메일 폼 생성
+//        MimeMessage emailForm = createNewPostNotificationEmailForm(emailDto, postName, boardId, postTypes);
+//
+//        // 이메일 송신
+//        javaMailSender.send(emailForm);
+//
+//        log.info("New post notification email sent successfully to {}", emailDto.email());
+//    }
 
 }
