@@ -47,13 +47,75 @@ public class AuthController {
                     @ApiResponse(responseCode = "200", description = "로그인 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": true,
+                                            "data": "jwtTokenExample123456",
+                                            "error": null
+                                        }
+                                    """)
                             )
                     }),
-                    @ApiResponse(responseCode = "400", description = "해당 프로바이더에 대한 서비스가 존재하지 않음"),
-                    @ApiResponse(responseCode = "401", description = "인증에 실패함"),
-                    @ApiResponse(responseCode = "404", description = "사용자 정보 등록 실패"),
-                    @ApiResponse(responseCode = "500", description = "JWT 토큰 발급에 실패함")
+                    @ApiResponse(responseCode = "400", description = "해당 프로바이더에 대한 서비스가 존재하지 않음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "BAD_REQUEST",
+                                                "message": "해당 프로바이더에 대한 서비스가 존재하지 않음"
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "401", description = "인증에 실패함", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "UNAUTHORIZED",
+                                                "message": "인증에 실패함"
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "404", description = "사용자 정보 등록 실패", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "NOT_FOUND",
+                                                "message": "사용자 정보 등록 실패"
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "500", description = "JWT 토큰 발급에 실패함", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "JWT_GENERATION_FAILED",
+                                                "message": "JWT 토큰 발급에 실패함"
+                                            }
+                                        }
+                                    """)
+                            )
+                    })
             },
             parameters = {
                     @Parameter(name = "provider", description = "소셜 제공자 (ex: google, kakao, naver)",in = ParameterIn.PATH, required = true),
@@ -102,14 +164,33 @@ public class AuthController {
             summary = "로그아웃",
             description = "JWT 토큰으로 로그아웃. 클라이언트에서 토큰을 삭제해줘야 함.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "로그아웃 성공",content = {
+                    @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": true,
+                                            "data": null,
+                                            "error": null
+                                        }
+                                    """)
                             )
                     }),
-                    @ApiResponse(responseCode = "401", description = "JWT 토큰이 유효하지 않음")
-
+                    @ApiResponse(responseCode = "401", description = "JWT 토큰이 유효하지 않음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "UNAUTHORIZED",
+                                                "message": "JWT 토큰이 유효하지 않음"
+                                            }
+                                        }
+                                    """)
+                            )
+                    })
             },
             parameters = {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true)
@@ -128,16 +209,63 @@ public class AuthController {
             summary = "회원 탈퇴",
             description = "현재 JWT 토큰으로 계정을 삭제합니다.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공",content = {
+                    @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공", content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class)
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": true,
+                                            "data": null,
+                                            "error": null
+                                        }
+                                    """)
                             )
                     }),
-                    @ApiResponse(responseCode = "401", description = "JWT 토큰이 유효하지 않음"),
-                    @ApiResponse(responseCode = "404", description = "사용자를 찾는데 실패함"),
-                    @ApiResponse(responseCode = "500", description = "회원 탈퇴에 실패함")
-
+                    @ApiResponse(responseCode = "401", description = "JWT 토큰이 유효하지 않음", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "UNAUTHORIZED",
+                                                "message": "JWT 토큰이 유효하지 않음"
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "404", description = "사용자를 찾는데 실패함", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "NOT_FOUND",
+                                                "message": "사용자를 찾는데 실패함"
+                                            }
+                                        }
+                                    """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "500", description = "회원 탈퇴에 실패함", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                        {
+                                            "success": false,
+                                            "data": null,
+                                            "error": {
+                                                "errorCode": "INTERNAL_SERVER_ERROR",
+                                                "message": "회원 탈퇴에 실패함"
+                                            }
+                                        }
+                                    """)
+                            )
+                    })
             },
             parameters = {
             @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true)
