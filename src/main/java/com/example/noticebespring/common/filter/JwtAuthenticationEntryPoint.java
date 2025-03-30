@@ -3,6 +3,11 @@ package com.example.noticebespring.common.filter;
 import com.example.noticebespring.common.response.CommonResponse;
 import com.example.noticebespring.common.response.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-// JWT 토큰 검증 후에 예외 발생시 실행
+// 인증되지 않은 사용자의 요청에 대해 401 Unauthorized 응답을 반환
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -28,9 +33,32 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         log.warn("Unauthorized access attempt to {}", request.getRequestURI());
 
-        CommonResponse<?> apiResponse = CommonResponse.fail(ErrorCode.UNAUTHORIZED);
+        ErrorCode errorCode = getErrorCode(authException);
+
+        CommonResponse<?> commonResponse = CommonResponse.fail(errorCode);
+
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
-        objectMapper.writeValue(response.getWriter(), apiResponse);
+        objectMapper.writeValue(response.getWriter(), commonResponse);
+    }
+
+    // 예외 종류에 따라 적절한 ErrorCode를 반환
+    private ErrorCode getErrorCode(AuthenticationException authException) {
+        Throwable cause = authException.getCause();
+
+        if (cause instanceof ExpiredJwtException) {
+            log.error("JWT token expired: {}", cause.getMessage());
+            return ErrorCode.JWT_TOKEN_EXPIRED;
+        } else if (cause instanceof SignatureException) {
+            log.error("JWT signature invalid: {}", cause.getMessage());
+            return ErrorCode.JWT_SIGNATURE_INVALID;
+        } else if (cause instanceof MalformedJwtException) {
+            log.error("JWT malformed: {}", cause.getMessage());
+            return ErrorCode.JWT_TOKEN_ERROR;
+        } else {
+            log.error("JWT authentication failed: {}", cause.getMessage());
+            return ErrorCode.UNAUTHORIZED;
+        }
     }
 }
+

@@ -1,12 +1,15 @@
 package com.example.noticebespring.service.auth.jwt;
 
+import com.example.noticebespring.common.response.CustomException;
+import com.example.noticebespring.common.response.ErrorCode;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 import java.util.Queue;
 
@@ -49,7 +52,6 @@ public class JwtService {
         return false;
     }
 
-
     private boolean isTokenValidWithKey(String token, SecretKey key){
         try {
             Jwts.parser()
@@ -80,4 +82,5 @@ public class JwtService {
                 .getPayload();
         return Integer.valueOf(claims.getSubject());
     }
+
 }

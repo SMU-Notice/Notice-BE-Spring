@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,4 +34,8 @@ public class User {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now(); // 생성 시 자동 설정
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<BookmarkFolder> bookmarkFolderList = new ArrayList<>();
 }

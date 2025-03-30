@@ -4,11 +4,15 @@ import com.example.noticebespring.service.auth.jwt.JwtService;
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,11 +22,11 @@ import java.io.IOException;
 
 // JWT로 API 요청시 검증하는 필터
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,24 +36,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")){
+        if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-
         String token = header.substring(7); // JWT 토큰 추출
-        if (jwtService.isTokenValid(token)){
+
+        if (jwtService.isTokenValid(token)) {
             Integer userId = jwtService.extractUserId(token);
 
             UsernamePasswordAuthenticationToken authentication
-                    = new UsernamePasswordAuthenticationToken(userId,null, null);
+                    = new UsernamePasswordAuthenticationToken(userId, null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            filterChain.doFilter(request, response);
-        }else{
-            // JWT 유효성 검증 실패
-
-           throw new CustomException(ErrorCode.UNAUTHORIZED);
+            log.info("Authenticated user: {}", userId);
         }
+
+        //다음 필터로 요청 전달
+        filterChain.doFilter(request, response);
 
     }
 

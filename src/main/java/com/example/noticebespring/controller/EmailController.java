@@ -50,6 +50,8 @@ public class EmailController {
                     )
             )
     })
+
+  
     @PostMapping("/verification/send")
     public CommonResponse<String> mailSend(@RequestBody EmailDto emailDto) throws MessagingException {
         log.info("EmailController.mailSend()");
