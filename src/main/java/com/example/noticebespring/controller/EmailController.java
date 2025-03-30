@@ -1,6 +1,6 @@
 package com.example.noticebespring.controller;
 
-import com.example.noticebespring.common.response.ApiResponse;
+import com.example.noticebespring.common.response.CommonResponse;
 import com.example.noticebespring.dto.email.EmailDto;
 import com.example.noticebespring.dto.email.EmailVerificationDto;
 import com.example.noticebespring.service.email.EmailService;
@@ -35,11 +35,11 @@ public class EmailController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = ""),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ApiResponse<String> mailSend(@RequestBody EmailDto emailDto) throws MessagingException {
+    public CommonResponse<String> mailSend(@RequestBody EmailDto emailDto) throws MessagingException {
         log.info("EmailController.mailSend()");
         emailService.sendEmail(emailDto);
         String message = "인증 코드가 발송되었습니다.";
-        return ApiResponse.ok(message);
+        return CommonResponse.ok(message);
     }
 
     @PostMapping("/verification/verify")
@@ -54,15 +54,15 @@ public class EmailController {
                             description = "인증 코드 오류",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = ApiResponse.class),
+                                    schema = @Schema(implementation = CommonResponse.class),
                                     examples = @ExampleObject(value = "{\n  \"success\": false,\n  \"data\": null,\n  \"error\": {\n    \"code\": 40002,\n    \"message\": \"인증 코드 오류\"\n  }\n}")
                             )),
                 @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ApiResponse<String> verify(@RequestBody EmailVerificationDto emailVerificationDtoDto) {
+    public CommonResponse<String> verify(@RequestBody EmailVerificationDto emailVerificationDtoDto) {
         log.info("EmailController.verify()");
         emailService.verifyEmailCode(emailVerificationDtoDto);
-        return ApiResponse.ok("인증이 완료되었습니다.");
+        return CommonResponse.ok("인증이 완료되었습니다.");
     }
 
 }

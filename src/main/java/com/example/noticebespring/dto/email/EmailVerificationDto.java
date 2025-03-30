@@ -8,7 +8,7 @@ public record EmailVerificationDto(
         @NotEmpty(message = "Email cannot be empty")
         String email,
 
-        @Schema(description = "이메일 인증 코드", example = "123456", required = true)
+        @Schema(description = "이메일 인증 코드", example = "123456")
         @NotEmpty(message = "Verification Code cannot be empty")
         String verificationCode
 ) {

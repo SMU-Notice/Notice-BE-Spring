@@ -10,7 +10,6 @@ import lombok.*;
 @Table(name = "social_account")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class SocialAccount {
 
     @Id
