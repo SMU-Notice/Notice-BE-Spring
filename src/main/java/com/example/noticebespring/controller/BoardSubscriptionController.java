@@ -95,18 +95,19 @@ public class BoardSubscriptionController {
                     description = "구독 취소 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = CommonResponse.class)
+                            schema = @Schema(implementation = CommonResponse.class),
+                            examples = @ExampleObject(value = "{ \"success\": true, \"data\": \"구독이 모두 취소되었습니다.\", \"error\": null }")
                     )
             ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "기존에 구독 내역이 없음",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CommonResponse.class),
-                            examples = @ExampleObject(value = "{ \"success\": false, \"data\": null, \"error\": { \"code\": 40404, \"message\": \"삭제할 구독이 없습니다.\" } }")
-                    )
-            )
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "기존에 구독 내역이 없음",
+//                    content = @Content(
+//                            mediaType = "application/json",
+//                            schema = @Schema(implementation = CommonResponse.class),
+//                            examples = @ExampleObject(value = "{ \"success\": true, \"data\": \"구독 정보가 없습니다.\", \"error\": null }")
+//                    )
+//            )
     })
     @DeleteMapping
     public CommonResponse<String> cancelSubscription() {

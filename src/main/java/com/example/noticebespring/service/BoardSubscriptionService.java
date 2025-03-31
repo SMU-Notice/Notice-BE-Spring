@@ -174,7 +174,7 @@ public class BoardSubscriptionService {
 
         // 구독 정보 없음
         if (subscriptions.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND_SUBSCRIPTION);
+            return "구독이 모두 취소되었습니다.";
         }
 
         // 모든 구독 삭제
