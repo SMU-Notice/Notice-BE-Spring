@@ -1,9 +1,11 @@
 package com.example.noticebespring.controller.mypage;
 
 import com.example.noticebespring.common.response.CommonResponse;
+import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
 import com.example.noticebespring.dto.bookmark.BookmarkFolderDto;
 import com.example.noticebespring.dto.bookmark.BookmarkedPostsDto;
+import com.example.noticebespring.dto.bookmark.FolderUpdateRequestDto;
 import com.example.noticebespring.service.auth.UserService;
 import com.example.noticebespring.service.mypage.BookmarkFolderService;
 import com.example.noticebespring.service.mypage.BookmarkService;
@@ -11,23 +13,25 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-
-@Controller
+@Slf4j
+@RestController
 @RequestMapping("/api/mypage/bookmark")
 @RequiredArgsConstructor
 @Tag(name = "북마크 페이지 API", description = "사용자 별로 북마크 페이지 지원 (복마크 폴더 목록, 복마크된 게시물)")
-public class BookmarkController {
+public class MyBookmarkController {
     private final BookmarkFolderService folderService;
     private final BookmarkService bookmarkService;
     private final UserService userService;
@@ -136,12 +140,12 @@ public class BookmarkController {
             }
     )
     @PostMapping("/")
-    public CommonResponse<BookmarkFolderDto> createNewBooknarkFolder(){
+    public CommonResponse<BookmarkFolderDto> createNewBookmarkFolder(){
         Integer userId = userService.getAuthenticatedUser().getId();
 
         try {
             BookmarkFolderDto newfolder = folderService.createBookmarkFolder(userId);
-            return CommonResponse.ok(newfolder);
+            return CommonResponse.created(newfolder);
         } catch (Exception e){
             return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -167,7 +171,7 @@ public class BookmarkController {
                                     """)
                             )
                     }),
-                    @ApiResponse(responseCode = "400", description = "폴더 이름이 중복됨", content = {
+                    @ApiResponse(responseCode = "409", description = "폴더 이름이 중복됨", content = {
                             @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(example = """
@@ -175,8 +179,8 @@ public class BookmarkController {
                                             "success": false,
                                             "data": null,
                                             "error": {
-                                                "errorCode": "40004",
-                                                "message": "폴더 이름이 중복됩니다."
+                                                "errorCode": "40901",
+                                                "message": "동일한 이름의 폴더가 이미 존재합니다."
                                             }
                                         }
                                     """)
@@ -233,20 +237,20 @@ public class BookmarkController {
             parameters = {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true),
                     @Parameter(name = "folderId", description = "폴더의 id",in = ParameterIn.PATH, required = true),
-                    @Parameter(name = "newName", description = "변경할 이름",in = ParameterIn.QUERY, required = true)
+                    @Parameter(name = "newName", description = "새 폴더 이름",in = ParameterIn.QUERY, required = true)
             }
     )
     @PatchMapping("/{folderId}")
-    public CommonResponse<BookmarkFolderDto> updateBookmarkFolderName(@PathVariable Integer folderId, @RequestParam String newName) {
+    public CommonResponse<BookmarkFolderDto> updateBookmarkFolderName(@PathVariable("folderId") Integer folderId, @RequestParam String newName) {
+        log.info("Received request: folderId={}, newName={}", folderId, newName);
         Integer userId = userService.getAuthenticatedUser().getId();
-
         try {
             BookmarkFolderDto updateFolder = folderService.updateBookmarkFolderName(userId, folderId, newName);
             return CommonResponse.ok(updateFolder);
         } catch (EntityNotFoundException e){
             return CommonResponse.fail(ErrorCode.NOT_FOUND_FOLDER);
-        } catch (IllegalArgumentException e){
-            return CommonResponse.fail(ErrorCode.INVALID_VERIFY_FOLDER_NAME);
+        } catch (CustomException e){
+            return CommonResponse.fail(ErrorCode.EXISTS_ALREADY_FOLDER_NAME);
         } catch (AccessDeniedException e){
             return CommonResponse.fail(ErrorCode.FORBIDDEN);
         } catch (Exception e){
@@ -322,7 +326,7 @@ public class BookmarkController {
             }
     )
     @DeleteMapping("/{folderId}")
-    public CommonResponse<Void> deleteBookmarkFolder(@PathVariable Integer folderId){
+    public CommonResponse<Void> deleteBookmarkFolder(@PathVariable("folderId") Integer folderId){
         Integer userId = userService.getAuthenticatedUser().getId();
 
         try {
@@ -350,14 +354,20 @@ public class BookmarkController {
                                             "success": true,
                                             "data": [
                                                 {
-                                                    "postId": 1,
-                                                    "postTitle": "2차 수강신청",
-                                                    "createdAt": "2025-03-30T12:34:56"
+                                                    "id": 1,
+                                                    "title": "2차 수강신청",
+                                                    "viewCount: "2910",
+                                                    "hasReference: "true",
+                                                    "postedDate": "2025-03-30T12:34:56"
+                                                    "isBookmarked: "true"
                                                 },
                                                 {
-                                                    "postId": 2,
-                                                    "postTitle": "장학금 안내",
-                                                    "createdAt": "2025-03-30T12:35:00"
+                                                    "id": 2,
+                                                    "title": "장학금 안내",
+                                                    "viewCount: "4732",
+                                                    "hasReference: "false",
+                                                    "postedDate": "2025-03-30T12:35:00",
+                                                    "isBookmarked: "true"
                                                 }
                                             ],
                                             "error": null

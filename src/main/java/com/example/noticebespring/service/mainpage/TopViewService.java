@@ -1,7 +1,7 @@
-package com.example.noticebespring.service;
+package com.example.noticebespring.service.mainpage;
 
-import com.example.noticebespring.dto.TopViewDto;
-import com.example.noticebespring.repository.PostRepository;
+import com.example.noticebespring.dto.main.TopViewDto;
+import com.example.noticebespring.repository.Qrepository.post.TopViewPostRepositoryCustom;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,10 +10,10 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class MainService {
-    private final PostRepository postRepository;
+public class TopViewService {
+    private final TopViewPostRepositoryCustom postRepository;
 
-    public MainService(PostRepository postRepository) {
+    public TopViewService(TopViewPostRepositoryCustom postRepository) {
         this.postRepository = postRepository;
     }
 

@@ -1,4 +1,4 @@
-package com.example.noticebespring.repository.Qrepository;
+package com.example.noticebespring.repository.Qrepository.bookmark;
 
 import com.example.noticebespring.dto.bookmark.BookmarkFolderDto;
 
