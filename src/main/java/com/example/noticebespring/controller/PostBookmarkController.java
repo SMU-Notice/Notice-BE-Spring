@@ -12,11 +12,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 //모든 공지, 상세 게시물 페이지에서의 게시물 북마크 추가 및 제거 컨트롤러
+@Slf4j
 @RestController
 @RequestMapping("/api/bookmark")
 @Tag(name = "게시물 북마크 추가 제거 API", description = "게시물별 북마크 추가 및 제거 기능 (모든 공지, 상세 게시물 페이지에 적용)")
@@ -94,7 +95,8 @@ public class PostBookmarkController {
             }
     )
     @PostMapping("/add/{folderId}/{postId}")
-    public CommonResponse<Integer> addBookmark(@PathVariable Integer folderId, @PathVariable Integer postId){
+    public CommonResponse<Integer> addBookmark(@PathVariable("folderId") Integer folderId, @PathVariable("postId") Integer postId){
+        log.info("Received request: folderId={}, postId={}", folderId, postId);
         Integer userId = userService.getAuthenticatedUser().getId();
 
         try {
@@ -112,9 +114,9 @@ public class PostBookmarkController {
 
     @Operation(
             summary = "게시물 북마크 제거",
-            description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회",
+            description = "모든 공지 및 상세 게시물에서 단일 게시물에 북마크 제거",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "조회 성공 (성공 시 북마크 id 반환)", content = {
+                    @ApiResponse(responseCode = "200", description = "제거 성공", content = {
                             @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(example = """
@@ -164,7 +166,7 @@ public class PostBookmarkController {
             }
     )
     @DeleteMapping("/remove/{folderId}/{postId}")
-    public CommonResponse<Void> removeBookmark(@PathVariable Integer folderId, @PathVariable Integer postId){
+    public CommonResponse<Void> removeBookmark(@PathVariable("folderId") Integer folderId, @PathVariable("postId") Integer postId){
         Integer userId = userService.getAuthenticatedUser().getId();
         
         try {
