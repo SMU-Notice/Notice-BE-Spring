@@ -1,5 +1,7 @@
 package com.example.noticebespring.service.mypage;
 
+import com.example.noticebespring.common.response.CustomException;
+import com.example.noticebespring.common.response.ErrorCode;
 import com.example.noticebespring.dto.bookmark.BookmarkFolderDto;
 import com.example.noticebespring.entity.BookmarkFolder;
 import com.example.noticebespring.repository.BookmarkFolderRepository;
@@ -80,7 +82,7 @@ public class BookmarkFolderService {
 
         if (bookmarkFolderRepository.existsByUserIdAndName(userId, newName)) {
             log.error("폴더 이름 중복 - userId: {}, newName: {}", userId, newName);
-            throw new IllegalArgumentException("이미 존재하는 폴더 이름입니다.");
+            throw new CustomException(ErrorCode.EXISTS_ALREADY_FOLDER_NAME);
         }
 
         folder.setName(newName);
@@ -104,7 +106,7 @@ public class BookmarkFolderService {
             throw new AccessDeniedException("해당 폴더에 대한 권한이 없습니다.");
         }
 
-        bookmarkFolderRepository.deleteById(userId);
+        bookmarkFolderRepository.delete(folder);
         log.info("폴더 삭제 성공 - userId: {}, folderId: {}", userId, folderId);
     }
 }

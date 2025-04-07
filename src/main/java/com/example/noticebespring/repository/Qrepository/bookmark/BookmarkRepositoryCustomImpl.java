@@ -1,4 +1,4 @@
-package com.example.noticebespring.repository.Qrepository;
+package com.example.noticebespring.repository.Qrepository.bookmark;
 
 import com.example.noticebespring.dto.PostItemDto;
 import com.example.noticebespring.dto.bookmark.BookmarkedPostsDto;
@@ -6,6 +6,7 @@ import com.example.noticebespring.entity.QBookmark;
 import com.example.noticebespring.entity.QBookmarkFolder;
 import com.example.noticebespring.entity.QPost;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom {
+public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QBookmarkFolder bookmarkFolder = QBookmarkFolder.bookmarkFolder;
     private final QBookmark bookmark = QBookmark.bookmark;
@@ -39,12 +40,13 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom {
                 .select(Projections.constructor(
                         PostItemDto.class,
                         post.id,
+                        Expressions.asString(""),
                         post.title,
                         post.viewCount,
-                        post.url,
                         post.hasReference,
                         post.postedDate,
-                        bookmark.id.isNotNull()
+                        bookmark.id.isNotNull(),
+                        Expressions.asBoolean(false)
                 ))
                 .from(bookmark)
                 .join(bookmark.bookmarkFolder, bookmarkFolder)

@@ -1,8 +1,8 @@
-package com.example.noticebespring.repository.Qrepository;
+package com.example.noticebespring.repository.Qrepository.post;
 
 import com.example.noticebespring.entity.QBoard;
 import com.example.noticebespring.entity.QPost;
-import com.example.noticebespring.dto.TopViewDto;
+import com.example.noticebespring.dto.main.TopViewDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-@Repository
-public class PostRepositoryCustomImpl implements PostRepositoryCustom {
+@Repository("topViewPostRepositoryCustomImpl")
+public class TopViewPostRepositoryCustomImpl implements TopViewPostRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
     private final QPost post = QPost.post;
@@ -21,7 +21,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
 
     private static final int RECENT_DAYS = 30;
 
-    public PostRepositoryCustomImpl(JPAQueryFactory queryFactory) {
+    public TopViewPostRepositoryCustomImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 
@@ -31,6 +31,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
         return queryFactory
                 .select(Projections.constructor(
                         TopViewDto.class,
+                        post.id,
                         post.title,
                         post.postedDate,
                         post.viewCount))
@@ -48,7 +49,6 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
     private BooleanExpression boardNameEquals(String name){
         return name != null ? post.board.name.eq(name) : null;
     }
-
 
     @Override
     public List<TopViewDto> findTop7PostsByBoardName(String boardName) {
