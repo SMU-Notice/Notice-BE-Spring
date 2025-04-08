@@ -5,8 +5,10 @@ import com.example.noticebespring.common.response.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -14,6 +16,7 @@ import java.util.Date;
 import java.util.Queue;
 
 // JWT 토큰 발급 및 검증을 담당
+@Slf4j
 @Service
 public class JwtService {
     private final SecretKeyManager secretKeyManager;
@@ -60,7 +63,8 @@ public class JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
             return true;
-        } catch (Exception e) {
+        } catch (ExpiredJwtException | SignatureException | MalformedJwtException | SecurityException | IllegalArgumentException e) {
+            log.warn("JWT validation failed: {}", e.getMessage());
             return false;
         }
     }
@@ -75,12 +79,25 @@ public class JwtService {
 
     public Integer extractUserId(String token) {
         SecretKey key = secretKeyManager.getCurrentKey();
-        Claims claims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return Integer.valueOf(claims.getSubject());
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            String subject = claims.getSubject();
+            if (subject == null || !subject.matches("\\d+")) {
+                log.warn("Invalid JWT subject format: {}", subject);
+                throw new CustomException(ErrorCode.JWT_TOKEN_ERROR);
+            }
+            return Integer.valueOf(subject);
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT has expired: {}", e.getMessage());
+            throw new CustomException(ErrorCode.JWT_TOKEN_EXPIRED);
+        } catch (SignatureException | MalformedJwtException | SecurityException | IllegalArgumentException e) {
+            log.warn("JWT signature or structure error: {}", e.getMessage());
+            throw new CustomException(ErrorCode.JWT_TOKEN_ERROR);
+        }
     }
 
 }
