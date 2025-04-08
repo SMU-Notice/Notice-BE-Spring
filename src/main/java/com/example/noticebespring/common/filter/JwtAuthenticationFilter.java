@@ -37,19 +37,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
+            log.debug("Authorization header is missing or does not start with 'Bearer '");
             filterChain.doFilter(request, response);
             return;
         }
         String token = header.substring(7); // JWT 토큰 추출
 
-        if (jwtService.isTokenValid(token)) {
-            Integer userId = jwtService.extractUserId(token);
+        try {
+            if (jwtService.isTokenValid(token)) {
+                Integer userId = jwtService.extractUserId(token);
 
-            UsernamePasswordAuthenticationToken authentication
-                    = new UsernamePasswordAuthenticationToken(userId, null, null);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("Authenticated user: {}", userId);
+                UsernamePasswordAuthenticationToken authentication
+                        = new UsernamePasswordAuthenticationToken(userId, null, null);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("User authenticated successfully. User ID: {}", userId);
+            } else {
+                log.warn("Invalid JWT token");
+            }
+        } catch (Exception e) {
+            log.error("Exception occurred while processing JWT: {}", e.getMessage());
         }
+
 
         //다음 필터로 요청 전달
         filterChain.doFilter(request, response);
