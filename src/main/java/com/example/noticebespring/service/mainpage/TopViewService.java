@@ -22,15 +22,17 @@ public class TopViewService {
         log.debug("월간 인기 공지 조회 시작 - boardName: {}", name);
 
         if (name == null || name.strip().isEmpty()){
-            log.warn("게시판 이름이 유효하지 않음 - boardName: {}", name);
-            throw new IllegalArgumentException("게시판 이름이 유효하지 않습니다.");
+            IllegalArgumentException ex = new IllegalArgumentException("게시판 이름이 유효하지 않습니다.");
+            log.warn("게시판 이름이 유효하지 않음 - boardName: {}", name, ex);
+            throw ex;
         }
 
         List<TopViewDto> posts = postRepository.findTop7PostsByBoardName(name);
 
         if (posts.isEmpty()){
-            log.warn("게시물이 존재하지 않음 - boardName: {}", name);
-            throw new EntityNotFoundException(name + " 게시판에 게시물이 존재하지 않습니다.");
+            EntityNotFoundException ex = new EntityNotFoundException(name + " 게시판에 게시물이 존재하지 않습니다.");
+            log.warn("게시물이 존재하지 않음 - boardName: {}", name, ex);
+            throw ex;
         }
 
         log.info("월간 인기 공지 조회 성공 - boardName: {}");

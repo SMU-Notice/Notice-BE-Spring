@@ -67,6 +67,7 @@ public class SecretKeyManager {
                     .getPayload();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

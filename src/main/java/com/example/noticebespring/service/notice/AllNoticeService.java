@@ -38,7 +38,7 @@ public class AllNoticeService {
             }
             return posts;
         } catch (Exception e){
-            log.error("모든 공지 게시물 조회 실패 - user: {}, error : {} ", userId, e.getMessage());
+            log.error("모든 공지 게시물 조회 실패 - user: {}", userId, e);
             throw new CustomException(ErrorCode.POST_RETRIEVAL_ERROR);
         }
     }
