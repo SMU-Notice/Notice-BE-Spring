@@ -37,7 +37,9 @@ public class BookmarkService {
         BookmarkedPostsDto posts = bookmarkRepository.findAllPostsById(userId, folderId);
 
         if(posts == null){
-            throw new EntityNotFoundException("폴더를 찾을 수 없습니다");
+            EntityNotFoundException ex = new EntityNotFoundException("폴더를 찾을 수 없습니다");
+            log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId, ex);
+            throw ex;
         }
 
         log.debug("북마크된 게시물 조회 성공 - folder: {}, posts: {}", folderId, posts.posts().size());
@@ -47,16 +49,29 @@ public class BookmarkService {
     //게시물에 북마크 추가
     @Transactional
     public Integer addBookmark(Integer userId, Integer folderId, Integer postId){
-        userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_USER);
+                    log.warn("사용자를 찾을 수 없음 - userId: {}", userId, ex);
+                    return ex;
+                });
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+                .orElseThrow(() -> {
+                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_POST);
+                    log.warn("게시물을 찾을 수 없음 - postId: {}", postId, ex);
+                    return ex;
+                });
         BookmarkFolder folder = folderRepository.findById(folderId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_FOLDER));
+                .orElseThrow(() -> {
+                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_FOLDER);
+                    log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId, ex);
+                    return ex;
+                });
 
         if(bookmarkRepository.existsByBookmarkFolderIdAndPostId(folderId, postId)){
-            log.warn("이미 북마크된 게시물 - userId: {}, folderId: {}, postId: {}", userId, folderId, postId);
-            throw new CustomException(ErrorCode.EXISTS_ALREADY_BOOKMARK);
+            CustomException ex = new CustomException(ErrorCode.EXISTS_ALREADY_BOOKMARK);
+            log.warn("이미 북마크된 게시물 - userId: {}, folderId: {}, postId: {}", userId, folderId, postId, ex);
+            throw ex;
         }
 
         Bookmark bookmark = Bookmark.builder()
@@ -73,12 +88,24 @@ public class BookmarkService {
     //게시물에서 북마크 제거
     @Transactional
     public void removeBookmark(Integer userId, Integer folderId, Integer postId){
-        userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-        postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
-        folderRepository.findById(folderId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_FOLDER));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_USER);
+                    log.warn("사용자를 찾을 수 없음 - userId: {}", userId, ex);
+                    return ex;
+                });
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> {
+                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_POST);
+                    log.warn("게시물을 찾을 수 없음 - postId: {}", postId, ex);
+                    return ex;
+                });
+        BookmarkFolder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> {
+                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_FOLDER);
+                    log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId, ex);
+                    return ex;
+                });
 
         Bookmark bookmark = bookmarkRepository.findByBookmarkFolderIdAndPostId(folderId, postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_BOOKMARK));
