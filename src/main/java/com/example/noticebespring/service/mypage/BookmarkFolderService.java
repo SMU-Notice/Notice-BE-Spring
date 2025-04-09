@@ -27,7 +27,7 @@ public class BookmarkFolderService {
 
     //상명대 상징에 대한 리스트
     private static final List<String> SYMBOL_LIST = Arrays.asList(
-            "스뮤", "수뭉", "상냥", "샘물", "슴우", "소목", "오스", "샘물", "자하",
+            "스뮤", "수뭉", "상냥", "슴우", "소목", "오스", "샘물", "자하",
             "월해", "학정", "공학", "미백", "문예", "밀레니엄"
     );
 
