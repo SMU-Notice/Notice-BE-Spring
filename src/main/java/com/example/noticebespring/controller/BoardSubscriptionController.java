@@ -2,9 +2,11 @@ package com.example.noticebespring.controller;
 
 
 import com.example.noticebespring.common.response.CommonResponse;
+import com.example.noticebespring.dto.boardSubscription.postNotification.PostNotificationRequestDto;
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionRequestDto;
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionResponseDto;
 import com.example.noticebespring.service.BoardSubscriptionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -115,15 +117,12 @@ public class BoardSubscriptionController {
         return CommonResponse.ok(message);
     }
 
-//    @PostMapping("/send-new-posts")
-//    public void sendNewPostsEmail(@RequestBody SubscriptionEmailRequestDto subscriptionEmailRequestDto) {
-//        log.info("New posts received for subscription: {}", subscriptionEmailRequestDto);
-//
-//        // 이메일 전송을 위한 처리
-//        emailService.sendNewPostNotification(subscriptionEmailRequestDto.newPosts());
-//
-//        log.info("New posts subscription email sent successfully.");
-//    }
+    @PostMapping("/new-posts")
+    public CommonResponse<String> notifyNewPosts(@RequestBody PostNotificationRequestDto requestDto) throws JsonProcessingException {
+        // 예: post_types = {"공지": [123, 456], "질문": [789]}
+        boardSubscriptionService.sendNewPostNotification(requestDto);
 
-
+        // 여기에 이메일 발송 로직 연동하면 됨
+        return CommonResponse.ok("이메일 전송 요청을 받았습니다.");
+    }
 }

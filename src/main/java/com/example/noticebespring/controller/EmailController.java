@@ -55,7 +55,7 @@ public class EmailController {
     @PostMapping("/verification/send")
     public CommonResponse<String> mailSend(@RequestBody EmailDto emailDto) throws MessagingException {
         log.info("EmailController.mailSend()");
-        emailService.sendEmail(emailDto);
+        emailService.sendVerificationEmail(emailDto);
         String message = "인증 코드가 발송되었습니다.";
         return CommonResponse.ok(message);
     }

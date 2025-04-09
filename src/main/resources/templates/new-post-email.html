@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>New Posts Notification</title>
+</head>
+<body>
+<p>안녕하세요!</p>
+<p>게시판 <strong th:text="${boardName}">게시판 이름</strong>에 새로운 글이 올라왔습니다:</p>
+
+<ul>
+    <li th:each="post : ${posts}">
+        <p><strong th:text="${post.title}">제목</strong></p>
+        <p th:text="${post.contentSummary}">요약 내용</p>
+    </li>
+</ul>
+
+<p>감사합니다.</p>
+</body>
+</html>

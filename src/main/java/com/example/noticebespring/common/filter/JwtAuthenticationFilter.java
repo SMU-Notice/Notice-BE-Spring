@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return request.getRequestURI().startsWith("/api/auth/login")||
                 request.getRequestURI().equals("/")||
                 request.getRequestURI().equals("/login")||
-                request.getRequestURI().startsWith("/api/auth/sneaky/register")||
-                request.getRequestURI().startsWith("/api/auth/sneaky/login");
+                request.getRequestURI().startsWith("/api/auth/sneaky/")||
+                request.getRequestURI().startsWith("/api/rabbit-mq/");
     }
 }
