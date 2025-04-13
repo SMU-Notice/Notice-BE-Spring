@@ -19,13 +19,9 @@ WORKDIR /app
 
 # 변수 정의
 ARG JAR_FILE=build/libs/Notice-BE-Spring-0.0.1-SNAPSHOT.jar
-ARG YML_FILE=src/main/resources/application.yml
-ARG DEV_YML_FILE=src/main/resources/application-docker-prod.yml
 
 # 빌드된 JAR 파일 및 설정 파일 복사
 COPY --from=build /app/${JAR_FILE} app.jar
-COPY ${YML_FILE} /application.yml
-COPY ${DEV_YML_FILE} /application-docker-prod.yml
 
 # 시간 동기화
 RUN apk add --no-cache tzdata \
