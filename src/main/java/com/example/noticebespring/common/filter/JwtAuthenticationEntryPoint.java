@@ -47,20 +47,20 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         Throwable cause = authException.getCause();
 
         if (cause == null) {
-            log.error("Authentication Failed - cause not found: {}", authException.getMessage());
+            log.error("Authentication Failed - cause not found", authException);
             return ErrorCode.UNAUTHORIZED;
         }
         else if (cause instanceof ExpiredJwtException) {
-            log.error("JWT token expired: {}", cause.getMessage());
+            log.error("JWT token expired", cause);
             return ErrorCode.JWT_TOKEN_EXPIRED;
         } else if (cause instanceof SignatureException) {
-            log.error("JWT signature invalid: {}", cause.getMessage());
+            log.error("JWT signature invalid", cause);
             return ErrorCode.JWT_SIGNATURE_INVALID;
         } else if (cause instanceof MalformedJwtException) {
-            log.error("JWT malformed: {}", cause.getMessage());
+            log.error("JWT malformed", cause);
             return ErrorCode.JWT_TOKEN_ERROR;
         } else {
-            log.error("JWT authentication failed: {}", cause.getMessage());
+            log.error("JWT authentication failed", cause);
             return ErrorCode.UNAUTHORIZED;
         }
     }

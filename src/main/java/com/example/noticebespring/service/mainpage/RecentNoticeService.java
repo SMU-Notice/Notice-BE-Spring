@@ -26,8 +26,9 @@ public class RecentNoticeService {
         List<PostItemDto> posts = postRepository.findRecent7Posts();
 
         if (posts.isEmpty()){
-            log.warn("게시물이 존재하지 않음");
-            throw new EntityNotFoundException("게시판에 게시물이 존재하지 않습니다.");
+            EntityNotFoundException ex = new EntityNotFoundException("게시판에 게시물이 존재하지 않습니다.");
+            log.warn("게시물이 존재하지 않음", ex);
+            throw ex;
         }
 
         log.info("모든 공지 조회 성공 - 최근 7개 게시물");

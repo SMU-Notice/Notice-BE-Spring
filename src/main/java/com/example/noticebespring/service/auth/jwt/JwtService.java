@@ -64,7 +64,7 @@ public class JwtService {
                     .getPayload();
             return true;
         } catch (ExpiredJwtException | SignatureException | MalformedJwtException | SecurityException | IllegalArgumentException e) {
-            log.warn("JWT validation failed: {}", e.getMessage());
+            log.warn("JWT validation failed", e);
             return false;
         }
     }
@@ -87,15 +87,16 @@ public class JwtService {
                     .getPayload();
             String subject = claims.getSubject();
             if (subject == null || !subject.matches("\\d+")) {
-                log.warn("Invalid JWT subject format: {}", subject);
-                throw new CustomException(ErrorCode.JWT_TOKEN_ERROR);
+                CustomException ex = new CustomException(ErrorCode.JWT_TOKEN_ERROR);
+                log.warn("Invalid JWT subject format: {}", subject, ex);
+                throw ex;
             }
             return Integer.valueOf(subject);
         } catch (ExpiredJwtException e) {
-            log.warn("JWT has expired: {}", e.getMessage());
+            log.warn("JWT has expired ", e);
             throw new CustomException(ErrorCode.JWT_TOKEN_EXPIRED);
         } catch (SignatureException | MalformedJwtException | SecurityException | IllegalArgumentException e) {
-            log.warn("JWT signature or structure error: {}", e.getMessage());
+            log.warn("JWT signature or structure error", e);
             throw new CustomException(ErrorCode.JWT_TOKEN_ERROR);
         }
     }
