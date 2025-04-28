@@ -1,6 +1,6 @@
 package com.example.noticebespring.repository.Qrepository.bookmark;
 
-import com.example.noticebespring.dto.bookmark.BookmarkFolderDto;
+import com.example.noticebespring.dto.mypage.bookmark.BookmarkFolderDto;
 import com.example.noticebespring.entity.QBookmarkFolder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;

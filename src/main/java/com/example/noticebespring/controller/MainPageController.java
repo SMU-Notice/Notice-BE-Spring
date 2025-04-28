@@ -151,87 +151,73 @@ public class MainPageController {
                                                      "data": [
                                                          {
                                                              "id": 19,
-                                                             "category": "post.board.name",
+                                                             "category": "통합공지",
                                                              "title": "[한미교육위원단] 2026-2027년도 풀브라이트 미국 대학원 유학 및 포스트닥 장학 프로그램 안내",
                                                              "viewCount": 1939,
-                                                             "url": "",
                                                              "hasReference": true,
                                                              "postedDate": "2025-03-18",
                                                              "isBookmarked": false,
-                                                             "isPostedToday": true,
-                                                             "isRead": false
+                                                             "isPostedToday": true
                                                          },
                                                          {
                                                              "id": 20,
-                                                             "category": "post.board.name",
+                                                             "category": "통합공지",
                                                              "title": "[중랑구] 패션봉제실무 및 창업·마케팅 교육 수강생 모집 안내",
                                                              "viewCount": 1398,
-                                                             "url": "",
                                                              "hasReference": true,
                                                              "postedDate": "2025-03-16",
                                                              "isBookmarked": false,
-                                                             "isPostedToday": false,
-                                                             "isRead": false
+                                                             "isPostedToday": false
                                                          },
                                                          {
                                                              "id": 21,
-                                                             "category": "post.board.name",
+                                                             "category": "통합공지",
                                                              "title": "[학생복지팀] 25 상반기 재단법인 춘천시민장학재단 봄내장학생 선발 안내",
                                                              "viewCount": 2003,
-                                                             "url": "",
                                                              "hasReference": true,
                                                              "postedDate": "2025-03-14",
                                                              "isBookmarked": false,
-                                                             "isPostedToday": false,
-                                                             "isRead": false
+                                                             "isPostedToday": false
                                                          },
                                                          {
                                                              "id": 22,
-                                                             "category": "post.board.name",
+                                                             "category": "통합공지",
                                                              "title": "2025년 상반기 민주화운동기념사업회 청년인턴 채용 공고 홍보 안내",
                                                              "viewCount": 1662,
-                                                             "url": "",
                                                              "hasReference": true,
                                                              "postedDate": "2025-03-12",
                                                              "isBookmarked": false,
-                                                             "isPostedToday": false,
-                                                             "isRead": false
+                                                             "isPostedToday": false
                                                          },
                                                          {
                                                              "id": 23,
-                                                             "category": "post.board.name",
+                                                             "category": "통합공지",
                                                              "title": "[경기콘텐츠진흥원] 2025년 경기게임아카데미 창업과정 14기 모집 안내",
                                                              "viewCount": 1431,
-                                                             "url": "",
                                                              "hasReference": true,
                                                              "postedDate": "2025-03-10",
                                                              "isBookmarked": false,
-                                                             "isPostedToday": false,
-                                                             "isRead": false
+                                                             "isPostedToday": false
                                                          },
                                                          {
                                                              "id": 24,
-                                                             "category": "post.board.name",
+                                                             "category": "통합공지",
                                                              "title": "[세종특별자치시] 2025년 세종특별자치시 공공데이터 활용 창업경진대회",
                                                              "viewCount": 1531,
-                                                             "url": "",
                                                              "hasReference": true,
                                                              "postedDate": "2025-03-08",
                                                              "isBookmarked": false,
-                                                             "isPostedToday": false,
-                                                             "isRead": false
+                                                             "isPostedToday": false
                                                          },
                                                          {
                                                              "id": 25,
-                                                             "category": "post.board.name",
+                                                             "category": "통합공지",
                                                              "title": "[자유전공학부대학] 2025학년도 자유전공학부대학 선후배이어주기 재학생 멘토모집",
                                                              "viewCount": 2844,
-                                                             "url": "",
                                                              "hasReference": true,
                                                              "postedDate": "2025-03-05",
                                                              "isBookmarked": false,
-                                                             "isPostedToday": false,
-                                                             "isRead": false
+                                                             "isPostedToday": false
                                                          }
                                                      ],
                                                      "error": null

@@ -23,12 +23,8 @@ public class User {
     @Column(nullable = false, length = 255, unique = true)
     private String email;  // 이메일 (고유 값)
 
-    @Setter
-    @Column(length = 30)
-    private String major;  // 전공
-
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;  // 생성 시간
+    private LocalDateTime createdAt;  // 생성 시각
 
     @PrePersist
     protected void onCreate() {
@@ -38,4 +34,26 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<BookmarkFolder> bookmarkFolderList = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable( name = "user_department",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "department_id"))
+    @Builder.Default
+    private List<Department> departmentList = new ArrayList<>();
+
+    public void addDepartment(Department department){
+        if(!departmentList.contains(department)){
+            departmentList.add(department);
+            department.getUserList().add(this);
+        }
+    }
+
+    public void removeDepartment(Department department){
+        if(departmentList.remove(department)){
+            department.getUserList().remove(this);
+        }
+    }
+
+
 }
