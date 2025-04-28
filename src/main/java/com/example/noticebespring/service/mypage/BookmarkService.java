@@ -2,7 +2,7 @@ package com.example.noticebespring.service.mypage;
 
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
-import com.example.noticebespring.dto.bookmark.BookmarkedPostsDto;
+import com.example.noticebespring.dto.mypage.bookmark.BookmarkedPostsDto;
 import com.example.noticebespring.entity.Bookmark;
 import com.example.noticebespring.entity.BookmarkFolder;
 import com.example.noticebespring.entity.Post;

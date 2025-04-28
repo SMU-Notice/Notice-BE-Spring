@@ -18,6 +18,8 @@ public enum ErrorCode {
     INVALID_PAGE_NUMBER(40005, HttpStatus.BAD_REQUEST, "페이지 번호값이 유효하지 않습니다."),
     INVALID_PAGE_SIZE(40006, HttpStatus.BAD_REQUEST, "페이지 크기값이 유효하지 않습니다."),
     INVALID_DATE_RANGE(40007, HttpStatus.BAD_REQUEST, "날짜 구간이 유효하지 않습니다."),
+    INVALID_COLLEGE_NAME(40008, HttpStatus.BAD_REQUEST, "단과대학 이름이 유효하지 않습니다."),
+    INVALID_DEPARTMENT_NAME(40009, HttpStatus.BAD_REQUEST, "학과 이름이 유효하지 않습니다."),
 
     //401 Unauthorized
     UNAUTHORIZED(40101,HttpStatus.UNAUTHORIZED, "인증에 실패하였습니다. 재로그인 하세요."),
@@ -36,10 +38,13 @@ public enum ErrorCode {
     NOT_FOUND_SUBSCRIPTION(40404, HttpStatus.NOT_FOUND, "구독 내역이 존재하지 않습니다."),
     NOT_FOUND_FOLDER(40405, HttpStatus.NOT_FOUND, "폴더를 찾을 수 없습니다."),
     NOT_FOUND_BOOKMARK(40406, HttpStatus.NOT_FOUND, "북마크를 찾을 수 없습니다."),
+    NOT_FOUND_COLLEGE(40407, HttpStatus.NOT_FOUND,"단과대학 이름을 찾을 수 없습니다."),
+    NOT_FOUND_DEPARTMENT(40408, HttpStatus.NOT_FOUND,"학과 이름을 찾을 수 없습니다."),
 
     // 409 Conflict
     EXISTS_ALREADY_FOLDER_NAME(40901, HttpStatus.CONFLICT, "동일한 이름의 폴더가 이미 존재합니다."),
     EXISTS_ALREADY_BOOKMARK(40902, HttpStatus.CONFLICT, "이미 북마크된 게시물입니다."),
+    EXISTS_ALREADY_DEPARTMENT(40903, HttpStatus.CONFLICT, "이미 추가된 학과입니다."),
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),

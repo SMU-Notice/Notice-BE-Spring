@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public record PostItemDto(
         Integer id,
         String boardName,
+        String postType,
         String title,
         Integer viewCount,
         Boolean hasReference,
