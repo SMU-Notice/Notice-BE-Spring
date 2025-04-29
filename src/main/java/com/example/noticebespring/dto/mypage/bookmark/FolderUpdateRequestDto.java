@@ -1,4 +1,4 @@
-package com.example.noticebespring.dto.bookmark;
+package com.example.noticebespring.dto.mypage.bookmark;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

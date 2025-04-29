@@ -88,6 +88,7 @@ public class AllNoticePostRepositoryCustomImpl implements AllNoticePostRepositor
                             PostItemDto.class,
                             post.id,
                             post.board.name,
+                            post.type,
                             post.title,
                             post.viewCount,
                             post.hasReference,

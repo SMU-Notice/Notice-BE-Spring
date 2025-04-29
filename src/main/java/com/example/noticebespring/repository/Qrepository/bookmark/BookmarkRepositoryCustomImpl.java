@@ -1,7 +1,7 @@
 package com.example.noticebespring.repository.Qrepository.bookmark;
 
 import com.example.noticebespring.dto.PostItemDto;
-import com.example.noticebespring.dto.bookmark.BookmarkedPostsDto;
+import com.example.noticebespring.dto.mypage.bookmark.BookmarkedPostsDto;
 import com.example.noticebespring.entity.QBookmark;
 import com.example.noticebespring.entity.QBookmarkFolder;
 import com.example.noticebespring.entity.QPost;
