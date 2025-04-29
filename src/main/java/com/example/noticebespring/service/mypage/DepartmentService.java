@@ -2,7 +2,7 @@ package com.example.noticebespring.service.mypage;
 
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
-import com.example.noticebespring.dto.mypage.bookmark.DepartmentDto;
+import com.example.noticebespring.dto.mypage.DepartmentDto;
 import com.example.noticebespring.entity.College;
 import com.example.noticebespring.entity.Department;
 import com.example.noticebespring.repository.CollegeRepository;
