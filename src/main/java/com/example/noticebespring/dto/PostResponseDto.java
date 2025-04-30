@@ -2,6 +2,7 @@ package com.example.noticebespring.dto;
 
 import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Getter
@@ -16,7 +17,12 @@ public class PostResponseDto {
     private String url;              // 원문 링크
     private Boolean hasReference;    // 첨부파일 여부
     private Boolean isBookmarked;	//북마크 여부
-    private String pictureSummary;	//사진의 요약 (없으면 null)
+    private List<String> pictureSummary;	//사진의 요약 (없으면 null)
     private Integer viewCount;		//조회수
     private LocalDate postedDate;	//게시일
+    
+    private Integer previousPostId;
+    private String previousPostTitle;
+    private Integer nextPostId;
+    private String nextPostTitle;
 }
