@@ -63,6 +63,8 @@ jobs:
             # Docker Compose 디렉토리로 이동
             cd /home/ubuntu/docker/app
             # Docker Compose로 이미지 풀, 컨테이너 내려서 올리기
+            docker-compose stop spring-app
+            docker-compose rm spring-app
             docker-compose pull spring-app
             docker-compose up -d spring-app
      
