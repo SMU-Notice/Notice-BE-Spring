@@ -1,0 +1,53 @@
+name: Deploy Docker Compose to Test EC2
+
+# test 브랜치 Pull Request가 열리거나 merge될 때 워크플로우 실행
+on:
+  pull_request:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 2. Docker Buildx 설치
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 3. Docker 이미지 빌드
+      - name: Build Docker image
+        run: |
+          docker build -t spring-app:latest .
+
+      # 4. DockerHub 로그인
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 5. Docker 이미지를 Docker Hub에 푸시
+      - name: Push Docker image to DockerHub
+        run: |
+          docker tag spring-app:latest ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
+
+
+# 6. EC2로 SSH 접속하여 Docker Compose로 배포
+      - name: SSH to EC2 and deploy with Docker Compose
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.TEST_EC2_HOST }}
+          username: ${{ secrets.TEST_EC2_USER }}
+          key: ${{ secrets.TEST_EC2_SSH_KEY }}
+          script: |
+            # Docker Compose 디렉토리로 이동
+            cd /home/ubuntu/docker/app
+            # Docker Compose로 이미지 풀, 컨테이너 내려서 올리기
+            docker-compose pull spring-app
+            docker-compose up -d spring-app
