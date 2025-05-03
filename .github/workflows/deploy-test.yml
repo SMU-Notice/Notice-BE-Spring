@@ -52,7 +52,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
 
 
-# 6. EC2로 SSH 접속하여 Docker Compose로 배포
+       # 6. EC2로 SSH 접속하여 Docker Compose로 배포
       - name: SSH to EC2 and deploy with Docker Compose
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -60,11 +60,27 @@ jobs:
           username: ${{ secrets.TEST_EC2_USER }}
           key: ${{ secrets.TEST_EC2_SSH_KEY }}
           script: |
-            # Docker Compose 디렉토리로 이동
+            # 1. 배포 디렉토리로 이동
+            echo "📂 Moving to deployment directory"
             cd /home/ubuntu/docker/app
-            # Docker Compose로 이미지 풀, 컨테이너 내려서 올리기
+            
+            # 2. spring-app 컨테이너 중지
+            echo "🛑 Stopping spring-app container"
             docker-compose stop spring-app
-            docker-compose rm spring-app
+            
+            # 3. spring-app 컨테이너 삭제
+            echo "🧹 Removing spring-app container"
+            docker-compose rm -f spring-app
+            
+            # 4. 최신 이미지 pull
+            echo "📥 Pulling latest spring-app image"
             docker-compose pull spring-app
+            
+            # 5. 새 컨테이너로 실행
+            echo "🚀 Starting new spring-app container"
             docker-compose up -d spring-app
-     
+            
+            # 6. 사용하지 않는 이미지/컨테이너 정리
+            echo "🧼 Cleaning up unused Docker resources"
+            docker system prune -f
+          
