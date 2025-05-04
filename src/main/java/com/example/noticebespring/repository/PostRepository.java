@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer>, TopViewPostRepositoryCustom, AllNoticePostRepositoryCustom, RecentNoticePostRepositoryCustom {
 
-    Optional<Post> findPreviousId(Integer id);
-    Optional<Post> findNextId(Integer id);
+    Optional<Post> findFirstByIdLessThanOrderByIdDesc(Integer id);
+    Optional<Post> findFirstByIdGreaterThanOrderByIdAsc(Integer id);
 }

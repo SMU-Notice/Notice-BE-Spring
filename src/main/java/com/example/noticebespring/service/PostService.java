@@ -37,11 +37,11 @@ public class PostService {
 
         
         Post previous = postRepository
-                .findPreviousId(postId)
+                .findFirstByIdLessThanOrderByIdDesc(postId)
                 .orElse(null);
 
         Post next = postRepository
-                .findNextId(postId)
+                .findFirstByIdGreaterThanOrderByIdAsc(postId)
                 .orElse(null);
         
         //해당 게시글 모든 사진 조회
@@ -70,7 +70,7 @@ public class PostService {
                 .pictureSummary(pictureSummary)
                 .viewCount(post.getViewCount())
                 .postedDate(post.getPostedDate())
-                .previousPostId(previous != null ? previous.getId()    : null)
+                .previousPostId(previous != null ? previous.getId() : null)
                 .previousPostTitle(previous != null ? previous.getTitle() : null)
                 .nextPostId(next != null ? next.getId()    : null)
                 .nextPostTitle(next != null ? next.getTitle() : null)
