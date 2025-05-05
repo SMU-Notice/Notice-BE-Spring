@@ -81,7 +81,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 메인, 로그인 화면, 인증 URL은 필터링에서 제외함
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getRequestURI().startsWith("/api/auth/login")||
+        return request.getMethod().equalsIgnoreCase("OPTIONS")||
+                request.getRequestURI().startsWith("/api/auth/login")||
                 request.getRequestURI().equals("/")||
                 request.getRequestURI().equals("/login")||
                 request.getRequestURI().startsWith("/api/auth/sneaky/register")||
