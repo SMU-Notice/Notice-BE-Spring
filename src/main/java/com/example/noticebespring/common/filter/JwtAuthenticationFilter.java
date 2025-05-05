@@ -40,10 +40,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (request.getRequestURI().startsWith("/api/auth/login/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
             log.info("Authorization header is missing or does not start with 'Bearer '");
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // HTTP 401 Unauthorized
+            response.getWriter().write("Authorization header is missing or does not start with 'Bearer '");
             return;
         }
         String token = header.substring(7); // JWT 토큰 추출
