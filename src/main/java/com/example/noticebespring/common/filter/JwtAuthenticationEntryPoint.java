@@ -59,6 +59,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         } else if (cause instanceof MalformedJwtException) {
             log.error("JWT malformed", cause);
             return ErrorCode.JWT_TOKEN_ERROR;
+        } else if (cause instanceof IllegalArgumentException) {
+            log.error("Invalid JWT token or header", cause);
+            return ErrorCode.UNAUTHORIZED;
         } else {
             log.error("JWT authentication failed", cause);
             return ErrorCode.UNAUTHORIZED;
