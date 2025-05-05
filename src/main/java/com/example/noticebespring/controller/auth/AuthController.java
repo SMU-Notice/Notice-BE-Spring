@@ -10,7 +10,6 @@ import com.example.noticebespring.service.auth.social.SocialTokenServiceFactory;
 import com.example.noticebespring.service.auth.social.SocialUserInfoServiceFactory;
 import com.example.noticebespring.service.auth.social.token.SocialTokenService;
 import com.example.noticebespring.service.auth.social.user.SocialUserInfoService;
-import com.example.noticebespring.common.response.CommonResponse;
 import com.example.noticebespring.common.response.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -138,7 +136,7 @@ public class AuthController {
 
                 return CommonResponse.fail(ErrorCode.UNAUTHORIZED);
             }
-            log.debug("액세스 토큰 발급 성공 - provider: {}, token: {}", provider, accessToken);
+            log.info("액세스 토큰 발급 성공 - provider: {}, token: {}", provider, accessToken);
 
 
             //3. 사용자 정보 처리
