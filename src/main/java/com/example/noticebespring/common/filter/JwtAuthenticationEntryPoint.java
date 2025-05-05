@@ -33,7 +33,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         log.warn("Unauthorized access attempt to {}", request.getRequestURI());
 
-        ErrorCode errorCode = getErrorCode(authException, request);
+        ErrorCode errorCode = getErrorCode(authException);
 
         CommonResponse<?> commonResponse = CommonResponse.fail(errorCode);
 
@@ -43,28 +43,27 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     }
 
     // 예외 종류에 따라 적절한 ErrorCode를 반환
-    private ErrorCode getErrorCode(AuthenticationException authException, HttpServletRequest request) {
+    private ErrorCode getErrorCode(AuthenticationException authException) {
         Throwable cause = authException.getCause();
 
         if (cause == null) {
-            log.error("Authentication Failed - cause not found - message: {}, exception: {}",
-                    authException.getMessage(), authException.getClass().getSimpleName(), authException);
+            log.error("Authentication Failed - cause not found", authException);
             return ErrorCode.UNAUTHORIZED;
-        } else if (cause instanceof ExpiredJwtException) {
-            log.error("JWT token expired - URI: {}", request.getRequestURI(), cause);
+        }
+        else if (cause instanceof ExpiredJwtException) {
+            log.error("JWT token expired", cause);
             return ErrorCode.JWT_TOKEN_EXPIRED;
         } else if (cause instanceof SignatureException) {
-            log.error("JWT signature invalid - URI: {}", request.getRequestURI(), cause);
+            log.error("JWT signature invalid", cause);
             return ErrorCode.JWT_SIGNATURE_INVALID;
         } else if (cause instanceof MalformedJwtException) {
-            log.error("JWT malformed - URI: {}", request.getRequestURI(), cause);
+            log.error("JWT malformed", cause);
             return ErrorCode.JWT_TOKEN_ERROR;
         } else if (cause instanceof IllegalArgumentException) {
-            log.error("Invalid JWT token or header - URI: {}", request.getRequestURI(), cause);
+            log.error("Invalid JWT token or header", cause);
             return ErrorCode.UNAUTHORIZED;
         } else {
-            log.error("JWT authentication failed - URI: {}, cause: {}",
-                    request.getRequestURI(), cause.getClass().getSimpleName(), cause);
+            log.error("JWT authentication failed", cause);
             return ErrorCode.UNAUTHORIZED;
         }
     }
