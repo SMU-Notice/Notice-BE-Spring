@@ -25,11 +25,11 @@ public class CorsProperties {
     @PostConstruct
     public void logLoadedProperties() {
         log.info("CORS 설정 로드됨:");
-        log.info("  Origins      : {}", allowedOrigins);
-        log.info("  Methods      : {}", allowedMethods);
-        log.info("  Headers      : {}", allowedHeaders);
-        log.info("  ExposedHeaders: {}", exposedHeaders);
-        log.info("  Credentials  : {}", allowCredentials);
-        log.info("  Max Age      : {}", maxAge);
+        log.info("  Origins      :  {}", allowedOrigins);
+        log.info("  Methods      :  {}", allowedMethods);
+        log.info("  Headers      :  {}", allowedHeaders);
+        log.info("  ExposedHeaders:  {}", exposedHeaders);
+        log.info("  Credentials  :  {}", allowCredentials);
+        log.info("  Max Age      :  {}", maxAge);
     }
 }
