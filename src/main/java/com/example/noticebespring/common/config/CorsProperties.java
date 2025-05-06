@@ -18,6 +18,7 @@ public class CorsProperties {
     private List<String> allowedOrigins;
     private List<String> allowedMethods;
     private List<String> allowedHeaders;
+    private List<String> exposedHeaders;
     private Boolean allowCredentials;
     private Long maxAge;
 
@@ -27,6 +28,7 @@ public class CorsProperties {
         log.info("  Origins      : {}", allowedOrigins);
         log.info("  Methods      : {}", allowedMethods);
         log.info("  Headers      : {}", allowedHeaders);
+        log.info("  ExposedHeaders: {}", exposedHeaders);
         log.info("  Credentials  : {}", allowCredentials);
         log.info("  Max Age      : {}", maxAge);
     }
