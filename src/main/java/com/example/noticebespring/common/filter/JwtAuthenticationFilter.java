@@ -40,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         if (request.getRequestURI().startsWith("/api/auth/login/")) {
+            log.info("Bypassing filter for /api/auth/login/");
             filterChain.doFilter(request, response);
             return;
         }
@@ -85,15 +86,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 메인, 로그인 화면, 인증 URL은 필터링에서 제외함
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getMethod().equalsIgnoreCase("OPTIONS")||
-                request.getRequestURI().startsWith("/api/auth/login")||
-                request.getRequestURI().startsWith("/swagger-ui")||
-                request.getRequestURI().startsWith("/v3/api-docs")||
-                request.getRequestURI().startsWith("/api-docs")||
-                request.getRequestURI().startsWith("/api/test001")||
-                request.getRequestURI().equals("/")||
-                request.getRequestURI().equals("/login")||
-                request.getRequestURI().startsWith("/api/auth/sneaky/register")||
+        boolean shouldNotFilter = request.getMethod().equalsIgnoreCase("OPTIONS") ||
+                request.getRequestURI().startsWith("/api/auth/login/") ||
+                request.getRequestURI().startsWith("/swagger-ui") ||
+                request.getRequestURI().startsWith("/v3/api-docs") ||
+                request.getRequestURI().startsWith("/api-docs") ||
+                request.getRequestURI().startsWith("/api/test001") ||
+                request.getRequestURI().equals("/") ||
+                request.getRequestURI().equals("/login") ||
+                request.getRequestURI().startsWith("/api/auth/sneaky/register") ||
                 request.getRequestURI().startsWith("/api/auth/sneaky/login");
+        log.info("shouldNotFilter for URI {}: {}", request.getRequestURI(), shouldNotFilter);
+        return shouldNotFilter;
     }
 }
