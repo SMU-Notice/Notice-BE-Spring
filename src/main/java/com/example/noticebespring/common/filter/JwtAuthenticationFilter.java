@@ -31,7 +31,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -88,6 +87,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         return request.getMethod().equalsIgnoreCase("OPTIONS")||
                 request.getRequestURI().startsWith("/api/auth/login")||
+                request.getRequestURI().startsWith("/swagger-ui")||
+                request.getRequestURI().startsWith("/v3/api-docs/")||
+                request.getRequestURI().startsWith("/api-docs/")||
+                request.getRequestURI().startsWith("/api/test001")||
                 request.getRequestURI().equals("/")||
                 request.getRequestURI().equals("/login")||
                 request.getRequestURI().startsWith("/api/auth/sneaky/register")||

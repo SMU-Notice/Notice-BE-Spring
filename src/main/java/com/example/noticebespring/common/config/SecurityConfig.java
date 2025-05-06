@@ -24,10 +24,12 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CorsProperties corsProperties;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, CorsProperties corsProperties) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.corsProperties = corsProperties;
     }
 
     @Bean
@@ -55,31 +57,24 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        return createCorsConfigurationSource();
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        configuration.setAllowedMethods(corsProperties.getAllowedMethods());
+        configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
+        configuration.setAllowCredentials(corsProperties.getAllowCredentials());
+        configuration.setMaxAge(corsProperties.getMaxAge());
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter() {
-        CorsFilter filter = new CorsFilter(createCorsConfigurationSource());
+        CorsFilter filter = new CorsFilter(corsConfigurationSource());
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(filter);
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
-    }
-
-    private CorsConfigurationSource createCorsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "https://test.smu-notice.kr"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        System.out.println("CORS Configuration applied: " + configuration.getAllowedOrigins());
-        return source;
     }
 }
