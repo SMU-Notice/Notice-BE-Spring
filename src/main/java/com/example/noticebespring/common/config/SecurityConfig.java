@@ -64,7 +64,7 @@ public class SecurityConfig {
         log.info("적용된 CORS Origins: {}", corsProperties.getAllowedOrigins());
         configuration.setAllowedMethods(corsProperties.getAllowedMethods());
         configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
-        configuration.setAllowedHeaders(corsProperties.getExposedHeaders());
+        configuration.setExposedHeaders(corsProperties.getExposedHeaders());
         configuration.setAllowCredentials(corsProperties.getAllowCredentials());
         configuration.setMaxAge(corsProperties.getMaxAge());
 
