@@ -22,6 +22,7 @@ public class CorsProperties {
     private Boolean allowCredentials;
     private Long maxAge;
 
+
     @PostConstruct
     public void logLoadedProperties() {
         log.info("CORS 설정 로드됨:");
