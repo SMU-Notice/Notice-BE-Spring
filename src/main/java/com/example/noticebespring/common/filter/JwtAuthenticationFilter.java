@@ -63,8 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info("User authenticated successfully. User ID: {}", userId);
             } else {
                 log.warn("유효하지 않은 JWT 토큰 - URI: {}", request.getRequestURI());
-                throw new BadCredentialsException("유효하지 않은 JWT 토큰입니다.",
-                        new IllegalArgumentException("Invalid JWT token"));
+                throw new BadCredentialsException("유효하지 않은 JWT 토큰입니다.");
             }
         } catch (ExpiredJwtException e) {
             log.warn("만료된 JWT 토큰 - URI: {}", request.getRequestURI(), e);
