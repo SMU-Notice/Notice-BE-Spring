@@ -65,6 +65,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userId, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("SecurityContext에 Authentication 설정 완료. principal={}, authorities={}",
+                        authentication.getPrincipal(),
+                        authentication.getAuthorities());
                 log.info("User authenticated successfully. User ID: {}", userId);
             } else {
                 log.warn("유효하지 않은 JWT 토큰 - URI: {}", request.getRequestURI());
