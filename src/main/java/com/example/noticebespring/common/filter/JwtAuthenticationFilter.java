@@ -31,51 +31,51 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         if (request.getMethod().equals("OPTIONS")) {
             filterChain.doFilter(request, response);
             return;
         }
+
         if (request.getRequestURI().startsWith("/api/auth/login/")) {
             log.info("Bypassing filter for /api/auth/login/");
             filterChain.doFilter(request, response);
             return;
         }
+
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
             log.error("Authorization header is missing or does not start with 'Bearer '");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // HTTP 401 Unauthorized
-            response.getWriter().write("Authorization header is missing or does not start with 'Bearer '");
+            // 예외로 던져서 EntryPoint로 넘김
+            AuthenticationException authEx = new AuthenticationServiceException("Missing or invalid Authorization header");
+            jwtAuthenticationEntryPoint.commence(request, response, authEx);
             return;
         }
-        String token = header.substring(7); // JWT 토큰 추출
+
+        String token = header.substring(7);
 
         try {
             if (jwtService.isTokenValid(token)) {
                 Integer userId = jwtService.extractUserId(token);
-
-                UsernamePasswordAuthenticationToken authentication
-                        = new UsernamePasswordAuthenticationToken(userId, null, null);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userId, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 log.info("User authenticated successfully. User ID: {}", userId);
             } else {
                 log.warn("유효하지 않은 JWT 토큰 - URI: {}", request.getRequestURI());
                 throw new BadCredentialsException("유효하지 않은 JWT 토큰입니다.");
             }
-        } catch (ExpiredJwtException e) {
-            log.warn("만료된 JWT 토큰 - URI: {}", request.getRequestURI(), e);
-            throw new AuthenticationServiceException("JWT 토큰이 만료되었습니다.", e);
-        } catch (SignatureException | MalformedJwtException e) {
-            log.warn("잘못된 JWT 서명 또는 형식 - URI: {}", request.getRequestURI(), e);
-            throw new AuthenticationServiceException("JWT 서명 또는 형식이 잘못되었습니다.", e);
         } catch (Exception e) {
-            log.error("JWT 처리 중 오류 발생 - URI: {}", request.getRequestURI(), e);
-            throw new AuthenticationServiceException("JWT 처리 중 오류가 발생했습니다.", e);
+            log.error("JWT 예외 발생 - URI: {}", request.getRequestURI(), e);
+            AuthenticationException authEx = new AuthenticationServiceException("JWT 인증 실패", e);
+            jwtAuthenticationEntryPoint.commence(request, response, authEx);
+            return;
         }
-
 
         //다음 필터로 요청 전달
         filterChain.doFilter(request, response);
