@@ -27,11 +27,22 @@ public abstract class AbstractTokenService implements SocialTokenService {
     @Setter
     protected String provider;
 
-
     @Override       
     public String getToken(String code, String state) { // 인가 코드로 액세스 토큰 반환
         logger.info("액세스 토큰 요청 시작 - provider: {}, code: {}", provider, code);
         SocialConfig.Provider config = socialProviderFactory.getProviderConfig(provider);
+        String tokenUri = config.getTokenUri();
+
+        // URI 검증
+        if (tokenUri == null || tokenUri.isEmpty()) {
+            logger.error("토큰 URI 누락 - provider: {}", provider);
+            throw new IllegalArgumentException(provider + "의 토큰 URI가 설정되지 않았습니다.");
+        }
+        if (!tokenUri.startsWith("http://") && !tokenUri.startsWith("https://")) {
+            logger.error("잘못된 토큰 URI 형식 - provider: {}, tokenUri: {}", provider, tokenUri);
+            throw new IllegalArgumentException(provider + "의 토큰 URI에 스키마(http:// 또는 https://)가 누락되었습니다.");
+        }
+
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
         params.add("client_id", config.getClientId());
@@ -44,6 +55,7 @@ public abstract class AbstractTokenService implements SocialTokenService {
             params.add("state", state);
         }
 
+
         String responseBody = restClient.post()
                 .uri(config.getTokenUri())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -52,10 +64,12 @@ public abstract class AbstractTokenService implements SocialTokenService {
                 .retrieve()
                 .body(String.class);
 
+        logger.info("토큰 응답 - provider: {}, response: {}", provider, responseBody);
+
         try {
             JsonNode jsonNode = objectMapper.readTree(responseBody);
             String accessToken = jsonNode.get("access_token").asText();
-            logger.debug("액세스 토큰 발급 성공 - provider: {}, token: {}", provider, accessToken);
+            logger.info("액세스 토큰 발급 성공 - provider: {}, token: {}", provider, accessToken);
             return accessToken;
 
         } catch (Exception e) {

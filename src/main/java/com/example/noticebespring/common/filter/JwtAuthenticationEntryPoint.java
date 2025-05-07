@@ -38,6 +38,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         CommonResponse<?> commonResponse = CommonResponse.fail(errorCode);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setCharacterEncoding("UTF-8"); // 한글 깨짐 방지
         response.setContentType("application/json");
         objectMapper.writeValue(response.getWriter(), commonResponse);
     }
@@ -59,6 +60,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         } else if (cause instanceof MalformedJwtException) {
             log.error("JWT malformed", cause);
             return ErrorCode.JWT_TOKEN_ERROR;
+        } else if (cause instanceof IllegalArgumentException) {
+            log.error("Invalid JWT token or header", cause);
+            return ErrorCode.UNAUTHORIZED;
         } else {
             log.error("JWT authentication failed", cause);
             return ErrorCode.UNAUTHORIZED;

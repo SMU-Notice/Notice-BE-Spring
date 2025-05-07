@@ -3,6 +3,7 @@ package com.example.noticebespring.common.config;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -11,22 +12,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableConfigurationProperties
+@EnableConfigurationProperties(SocialConfig.class)
 @ConfigurationProperties(prefix = "social")
 @Data
+@Slf4j
 public class SocialConfig {
     private Map<String, Provider> providers = new HashMap<>();
 
     @PostConstruct
     public void init() {
-        System.out.println("SocialConfig providers: " + providers);
-        for (Map.Entry<String, Provider> entry : providers.entrySet()) {
-            System.out.println("Provider: " + entry.getKey());
-            System.out.println("  clientId: " + entry.getValue().getClientId());
-            System.out.println("  clientSecret: " + entry.getValue().getClientSecret());
-            System.out.println("  redirectUri: " + entry.getValue().getRedirectUri());
-            System.out.println("  tokenUrl: " + entry.getValue().getTokenUri());
-            System.out.println("  userInfoUrl: " + entry.getValue().getUserInfoUri());
+        if (providers.isEmpty()) {
+            log.warn("SocialConfig: No providers loaded. Check environment variables or YAML configuration.");
+        } else {
+            log.info("SocialConfig loaded providers:");
+            for (Map.Entry<String, Provider> entry : providers.entrySet()) {
+                log.info("Provider: {}", entry.getKey());
+                log.info("  clientId: {}", entry.getValue().getClientId());
+                log.info("  clientSecret: {}", entry.getValue().getClientSecret());
+                log.info("  redirectUri: {}", entry.getValue().getRedirectUri());
+                log.info("  tokenUri: {}", entry.getValue().getTokenUri());
+                log.info("  userInfoUri: {}", entry.getValue().getUserInfoUri());
+            }
         }
     }
 
