@@ -38,6 +38,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         CommonResponse<?> commonResponse = CommonResponse.fail(errorCode);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setCharacterEncoding("UTF-8"); // 한글 깨짐 방지
         response.setContentType("application/json");
         objectMapper.writeValue(response.getWriter(), commonResponse);
     }
