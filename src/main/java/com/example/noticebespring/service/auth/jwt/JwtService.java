@@ -36,7 +36,7 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(key)
                 .compact();
-        log.debug("Generated token: {}", token);
+        log.info("Generated token: {}", token);
         return token;
     }
 
@@ -46,13 +46,13 @@ public class JwtService {
         Queue<SecretKey> previousKeys = secretKeyManager.getPreviousKeys();
 
         if (isTokenValidWithKey(token, currentKey)){
-            log.debug("Token is valid with current key");
+            log.info("Token is valid with current key");
             return true;
         }
 
         for (SecretKey prekey : previousKeys){
             if (isTokenValidWithKey(token, prekey)){
-                log.debug("Token is valid with previous key");
+                log.info("Token is valid with previous key");
                 return true;
             }
         }
@@ -80,7 +80,7 @@ public class JwtService {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String extractedToken = bearerToken.substring(7);
-            log.debug("Extracted token: {}", extractedToken);
+            log.info("Extracted token: {}", extractedToken);
             return extractedToken;
         }
         log.warn("Authorization header missing or does not start with Bearer");
@@ -97,7 +97,7 @@ public class JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
             String subject = claims.getSubject();
-            log.debug("Extracted subject from token: {}", subject);
+            log.info("Extracted subject from token: {}", subject);
 
             if (subject == null || !subject.matches("\\d+")) {
                 log.warn("Invalid subject format in JWT: {}", subject);
