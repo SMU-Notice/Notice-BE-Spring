@@ -51,11 +51,12 @@ public class EmailController {
             )
     })
 
-  
+
     @PostMapping("/verification/send")
     public CommonResponse<String> mailSend(@RequestBody EmailDto emailDto) throws MessagingException {
-        log.info("EmailController.mailSend()");
+        log.info("Verification email send request received for email: {}", emailDto.email());
         emailService.sendEmail(emailDto);
+        log.info("Verification code sent to {}", emailDto.email());
         String message = "인증 코드가 발송되었습니다.";
         return CommonResponse.ok(message);
     }
@@ -87,8 +88,9 @@ public class EmailController {
     })
     @PostMapping("/verification/verify")
     public CommonResponse<String> verify(@RequestBody EmailVerificationDto emailVerificationDto) {
-        log.info("EmailController.verify()");
+        log.info("Email verification request received for email: {} with code: {}", emailVerificationDto.email(), emailVerificationDto.verificationCode());
         emailService.verifyEmailCode(emailVerificationDto);
+        log.info("Email verification completed for email: {}", emailVerificationDto.email());
         return CommonResponse.ok("인증이 완료되었습니다.");
     }
 
