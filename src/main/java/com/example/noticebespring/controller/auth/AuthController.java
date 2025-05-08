@@ -37,14 +37,6 @@ public class AuthController {
     private final UserRepository userRepository;
     private final SocialAccountRepository socialAccountRepository;
 
-    // 브라우저 리디렉션(GET) 요청 수용용 핸들러
-    @GetMapping("/login/{provider}")
-    public CommonResponse<String> handleLoginRedirect(@PathVariable String provider) {
-        // 아무 처리도 하지 않고 프론트에서 다시 POST로 요청할 수 있도록 유도
-        log.warn("브라우저에서 받은 GET 요청 무시 - provider: {}", provider);
-        return CommonResponse.ok("Waiting for POST request from frontend...");
-    }
-
     @Operation(
             summary = "소셜 로그인",
             description = "인증 프로바이더(구글, 카카오, 네이버)를 통해 로그인 후 자체적으로 JWT 토큰 발급",
@@ -128,7 +120,7 @@ public class AuthController {
                     @Parameter(name = "state", description = "state(네이버에만 적용)", in = ParameterIn.QUERY, required = false)
             }
             )
-    @PostMapping("/login/{provider}")
+    @GetMapping("/login/{provider}")
     public CommonResponse<String> socialLogin(@PathVariable String provider, @RequestParam String code, @RequestParam(required = false) String state){
             log.info("소셜 로그인 요청 - provider: {}, code: {}, state: {}", provider, code, state);
 
