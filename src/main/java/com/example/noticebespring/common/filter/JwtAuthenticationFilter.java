@@ -31,6 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        log.info("==== [요청 확인] ====");
+        log.info("requestURI     = {}", request.getRequestURI());
+        log.info("servletPath    = {}", request.getServletPath());
+        log.info("contextPath    = {}", request.getContextPath());
+        log.info("method         = {}", request.getMethod());
+
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
             log.error("Authorization header is missing or does not start with 'Bearer '");
@@ -71,6 +77,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 메인, 로그인 화면, 인증 URL은 필터링에서 제외함
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+        log.info("==== [요청 확인] ====");
+        log.info("requestURI     = {}", request.getRequestURI());
+        log.info("servletPath    = {}", request.getServletPath());
+        log.info("contextPath    = {}", request.getContextPath());
+        log.info("method         = {}", request.getMethod());
         String path = request.getServletPath();
         boolean shouldNotFilter =
                 request.getMethod().equalsIgnoreCase("OPTIONS") ||
