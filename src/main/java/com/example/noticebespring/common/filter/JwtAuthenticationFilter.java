@@ -32,10 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         log.info("==== [요청 확인] ====");
+        log.info("requestURL     = {}", request.getRequestURL());
         log.info("requestURI     = {}", request.getRequestURI());
         log.info("servletPath    = {}", request.getServletPath());
-        log.info("contextPath    = {}", request.getContextPath());
+        log.info("queryString    = {}", request.getQueryString());
         log.info("method         = {}", request.getMethod());
+        log.info("User-Agent     = {}", request.getHeader("User-Agent"));
+        log.info("Referer        = {}", request.getHeader("Referer"));
 
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
@@ -78,10 +81,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         log.info("==== [요청 확인] ====");
+        log.info("requestURL     = {}", request.getRequestURL());
         log.info("requestURI     = {}", request.getRequestURI());
         log.info("servletPath    = {}", request.getServletPath());
-        log.info("contextPath    = {}", request.getContextPath());
+        log.info("queryString    = {}", request.getQueryString());
         log.info("method         = {}", request.getMethod());
+        log.info("User-Agent     = {}", request.getHeader("User-Agent"));
+        log.info("Referer        = {}", request.getHeader("Referer"));
         String path = request.getServletPath();
         boolean shouldNotFilter =
                 request.getMethod().equalsIgnoreCase("OPTIONS") ||
