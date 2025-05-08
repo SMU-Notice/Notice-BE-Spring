@@ -49,7 +49,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 );
