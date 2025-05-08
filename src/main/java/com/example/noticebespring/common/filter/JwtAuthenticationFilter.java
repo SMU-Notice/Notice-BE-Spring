@@ -31,17 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (request.getMethod().equals("OPTIONS")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (request.getRequestURI().startsWith("/api/auth/login/")) {
-            log.info("Bypassing filter for /api/auth/login/");
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
             log.error("Authorization header is missing or does not start with 'Bearer '");
@@ -82,17 +71,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 메인, 로그인 화면, 인증 URL은 필터링에서 제외함
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        boolean shouldNotFilter = request.getMethod().equalsIgnoreCase("OPTIONS") ||
-                request.getRequestURI().startsWith("/api/auth/login/") ||
-                request.getRequestURI().startsWith("/swagger-ui") ||
-                request.getRequestURI().startsWith("/v3/api-docs") ||
-                request.getRequestURI().startsWith("/api-docs") ||
-                request.getRequestURI().startsWith("/api/test001") ||
-                request.getRequestURI().equals("/") ||
-                request.getRequestURI().equals("/login") ||
-                request.getRequestURI().startsWith("/api/auth/sneaky/register") ||
-                request.getRequestURI().startsWith("/api/auth/sneaky/login");
-        log.info("shouldNotFilter for URI {}: {}", request.getRequestURI(), shouldNotFilter);
+        String path = request.getServletPath();
+        boolean shouldNotFilter =
+                request.getMethod().equalsIgnoreCase("OPTIONS") ||
+                        path.equals("/") ||
+                        path.equals("/login") ||
+                        path.startsWith("/swagger-ui") ||
+                        path.startsWith("/v3/api-docs") ||
+                        path.startsWith("/api-docs") ||
+                        path.startsWith("/auth/login/") ||
+                        path.startsWith("/auth/sneaky/") ||
+                        path.startsWith("/test001") ||
+
+                        // 외부 봇 탐지용 요청 무시
+                        path.endsWith(".aspx") ||
+                        path.startsWith("/Core/Skin/");
+                ;
+        log.info("shouldNotFilter for servletPath {}: {}", path, shouldNotFilter);
         return shouldNotFilter;
     }
 }
