@@ -37,6 +37,12 @@ public class AuthController {
     private final UserRepository userRepository;
     private final SocialAccountRepository socialAccountRepository;
 
+    @GetMapping("/login/{provider}")
+    public CommonResponse<String> handleLoginRedirect(@PathVariable String provider) {
+        log.info("브라우저에서 받은 GET 요청 무시 - provider: {}", provider);
+        return CommonResponse.ok("Waiting for POST request from frontend...");
+    }
+
     @Operation(
             summary = "소셜 로그인",
             description = "인증 프로바이더(구글, 카카오, 네이버)를 통해 로그인 후 자체적으로 JWT 토큰 발급",
@@ -120,7 +126,7 @@ public class AuthController {
                     @Parameter(name = "state", description = "state(네이버에만 적용)", in = ParameterIn.QUERY, required = false)
             }
             )
-    @GetMapping("/login/{provider}")
+    @PostMapping("/login/{provider}")
     public CommonResponse<String> socialLogin(@PathVariable String provider, @RequestParam String code, @RequestParam(required = false) String state){
             log.info("소셜 로그인 요청 - provider: {}, code: {}, state: {}", provider, code, state);
 
