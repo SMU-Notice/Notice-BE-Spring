@@ -104,7 +104,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         path.endsWith(".aspx") ||
                         path.startsWith("/Core/Skin/");
                 ;
-        log.info("shouldNotFilter for servletPath {}: {}", path, shouldNotFilter);
+        log.info("shouldNotFilter for servletPath {}: {} ", path, shouldNotFilter);
         return shouldNotFilter;
     }
 }
