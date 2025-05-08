@@ -96,9 +96,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         path.startsWith("/swagger-ui") ||
                         path.startsWith("/v3/api-docs") ||
                         path.startsWith("/api-docs") ||
-                        path.startsWith("api/auth/login/") ||
-                        path.startsWith("api/auth/sneaky/") ||
-                        path.startsWith("api/test001") ||
+                        path.startsWith("/api/auth/login/") ||
+                        path.startsWith("/api/auth/sneaky/") ||
+                        path.startsWith("/api/test001") ||
                         // 외부 봇 탐지용 요청 무시
                         path.endsWith(".aspx") ||
                         path.startsWith("/Core/Skin/");
