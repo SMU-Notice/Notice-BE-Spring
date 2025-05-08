@@ -53,6 +53,10 @@ public abstract class AbstractUserInfoService implements SocialUserInfoService {
             String providerId = extractProviderId(jsonNode);
             String email = extractEmail(jsonNode); // 마이페이지에서 설정 가능
             logger.info("사용자 정보 추출 - provider: {}, providerId: {}, email: {} ", provider, providerId, email);
+            if (email == null) {
+                logger.warn("이메일이 제공되지 않았습니다. provider: {}, providerId: {}", provider, providerId);
+                email = "";
+            }
 
             // 1. 동일 프로바이더의 계정이 이미 존재하는지 확인 -> 동일 프로바이더로 로그인
             Optional<SocialAccount> existingSocialAccount =

@@ -31,14 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.info("==== [요청 확인] ====");
-        log.info("requestURL     = {}", request.getRequestURL());
-        log.info("requestURI     = {}", request.getRequestURI());
-        log.info("servletPath    = {}", request.getServletPath());
-        log.info("queryString    = {}", request.getQueryString());
-        log.info("method         = {}", request.getMethod());
-        log.info("User-Agent     = {}", request.getHeader("User-Agent"));
-        log.info("Referer        = {}", request.getHeader("Referer"));
+//        log.info("==== [요청 확인] ====");
+//        log.info("requestURL     = {}", request.getRequestURL());
+//        log.info("requestURI     = {}", request.getRequestURI());
+//        log.info("servletPath    = {}", request.getServletPath());
+//        log.info("queryString    = {}", request.getQueryString());
+//        log.info("method         = {}", request.getMethod());
+//        log.info("User-Agent     = {}", request.getHeader("User-Agent"));
+//        log.info("Referer        = {}", request.getHeader("Referer"));
 
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
