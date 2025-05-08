@@ -1,13 +1,6 @@
 package com.example.noticebespring.common.filter;
 
 import com.example.noticebespring.service.auth.jwt.JwtService;
-import com.example.noticebespring.common.response.CustomException;
-import com.example.noticebespring.common.response.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,13 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-        String uri = request.getRequestURI();
-        String contextPath = request.getContextPath();
-        String requestURL = request.getRequestURL().toString();
-        String forwardedPrefix = request.getHeader("X-Forwarded-Prefix");
-        log.info("Processing request - URI: {}, Context Path: {}, Request URL: {}, X-Forwarded-Prefix: {}",
-                uri, contextPath, requestURL, forwardedPrefix);
 
         if (request.getMethod().equals("OPTIONS")) {
             filterChain.doFilter(request, response);
@@ -95,21 +81,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 메인, 로그인 화면, 인증 URL은 필터링에서 제외함
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        String contextPath = request.getContextPath(); // 컨텍스트 경로 가져오기 (예: /api)
-        log.info("shouldNotFilter - URI: {}, Context Path: {}", uri, contextPath);
         boolean shouldNotFilter = request.getMethod().equalsIgnoreCase("OPTIONS") ||
-                uri.startsWith(contextPath + "/auth/login/") || // 컨텍스트 경로 포함
-                uri.startsWith("/auth/login/") || // 컨텍스트 경로 없이도 허용
-                uri.startsWith("/swagger-ui") ||
-                uri.startsWith("/v3/api-docs") ||
-                uri.startsWith("/api-docs") ||
-                uri.startsWith("/api/test001") ||
-                uri.equals("/") ||
-                uri.equals("/login") ||
-                uri.startsWith("/api/auth/sneaky/register") ||
-                uri.startsWith("/api/auth/sneaky/login");
-        log.info("shouldNotFilter for URI {}: {}", uri, shouldNotFilter);
+                request.getRequestURI().startsWith("/api/auth/login/") ||
+                request.getRequestURI().startsWith("/swagger-ui") ||
+                request.getRequestURI().startsWith("/v3/api-docs") ||
+                request.getRequestURI().startsWith("/api-docs") ||
+                request.getRequestURI().startsWith("/api/test001") ||
+                request.getRequestURI().equals("/") ||
+                request.getRequestURI().equals("/login") ||
+                request.getRequestURI().startsWith("/api/auth/sneaky/register") ||
+                request.getRequestURI().startsWith("/api/auth/sneaky/login");
+        log.info("shouldNotFilter for URI {}: {}", request.getRequestURI(), shouldNotFilter);
         return shouldNotFilter;
     }
 }
