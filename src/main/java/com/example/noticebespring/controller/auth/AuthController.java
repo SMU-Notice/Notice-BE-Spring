@@ -37,7 +37,6 @@ public class AuthController {
     private final UserRepository userRepository;
     private final SocialAccountRepository socialAccountRepository;
 
-
     @Operation(
             summary = "소셜 로그인",
             description = "인증 프로바이더(구글, 카카오, 네이버)를 통해 로그인 후 자체적으로 JWT 토큰 발급",

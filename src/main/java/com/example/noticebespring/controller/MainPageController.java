@@ -137,7 +137,6 @@ public class MainPageController {
         }
     }
 
-
     @Operation(
             summary = "모든 공지 조회",
             description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회",
