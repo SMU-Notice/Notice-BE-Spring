@@ -67,7 +67,23 @@ public abstract class AbstractUserInfoService implements SocialUserInfoService {
 
             }
 
-            //2. 신규 사용자일 경우 -> 새로운 소셜 계정 생성 및 회원가입 처리
+            // 2. 이메일로 기존 사용자 있는지 확인
+            Optional<User> existingUserByEmail = userRepository.findByEmail(email);
+            if (existingUserByEmail.isPresent()) {
+                User existingUser = existingUserByEmail.get();
+                logger.info("이메일 중복으로 기존 유저에 소셜 계정 추가 - email: {}, userId: {}", email, existingUser.getId());
+
+                SocialAccount socialAccount = SocialAccount.builder()
+                        .user(existingUser)
+                        .provider(getProviderType())
+                        .providerId(providerId)
+                        .build();
+                socialAccountRepository.save(socialAccount);
+
+                return existingUser;
+            }
+
+            //3. 신규 사용자일 경우 -> 새로운 소셜 계정 생성 및 회원가입 처리
             User user = User.builder()
                     .email(email)
                     .createdAt(LocalDateTime.now())
