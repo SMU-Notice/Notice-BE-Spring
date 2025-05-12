@@ -40,11 +40,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        log.info("User-Agent     = {}", request.getHeader("User-Agent"));
 //        log.info("Referer        = {}", request.getHeader("Referer"));
 
+
         String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
-            log.error("Authorization header가 없거나 'Bearer '로 시작하지 않습니다.");
+
+        if (header == null) {
+            log.error("Authorization header가 없습니다. 요청 URI: {}", request.getRequestURI());
             // 예외로 던져서 EntryPoint로 넘김
-            AuthenticationException authEx = new AuthenticationServiceException("Authorization header 가 없거나 유효하지 않습니다.");
+            AuthenticationException authEx = new AuthenticationServiceException("Authorization header가 존재하지 않습니다.");
+            jwtAuthenticationEntryPoint.commence(request, response, authEx);
+            return;
+        }
+        if (!header.startsWith("Bearer ")) {
+            log.error("Authorization header가 'Bearer '로 시작하지 않습니다. 요청 URI: {}", request.getRequestURI());
+            // 예외로 던져서 EntryPoint로 넘김
+            AuthenticationException authEx = new AuthenticationServiceException("Authorization header 포맷이 잘못되었습니다.");
             jwtAuthenticationEntryPoint.commence(request, response, authEx);
             return;
         }
