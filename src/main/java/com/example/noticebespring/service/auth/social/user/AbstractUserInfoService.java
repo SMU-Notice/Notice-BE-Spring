@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -52,6 +53,14 @@ public abstract class AbstractUserInfoService implements SocialUserInfoService {
             JsonNode jsonNode = objectMapper.readTree(userInfoResponse);
             String providerId = extractProviderId(jsonNode);
             String email = extractEmail(jsonNode); // 마이페이지에서 설정 가능
+
+            //카카오처럼 이메일이 null인 경우 임시 이메일 생성 (테스트에만 적용)
+            if (email == null || email.isBlank()) {
+                String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+                email = randomString + "@" + provider.toLowerCase() + ".com";
+                logger.warn("이메일이 제공되지 않아 임시 이메일 생성 - provider: {}, email: {}", provider, email);
+            }
+
             logger.info("사용자 정보 추출 - provider: {}, providerId: {}, email: {} ", provider, providerId, email);
             if (email == null) {
                 logger.warn("이메일이 제공되지 않았습니다. provider: {}, providerId: {}", provider, providerId);
