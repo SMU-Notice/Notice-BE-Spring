@@ -35,6 +35,15 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         ErrorCode errorCode = getErrorCode(authException);
 
+        if(errorCode.getCode().equals(40101)) {
+            log.error("[40101 UNAUTHORIZED] 인증 실패 - URI: {}, 코드: {}, 메시지: {}",
+                    request.getRequestURI(),
+                    errorCode.getCode(),
+                    errorCode.getMessage(),
+                    authException
+            );
+        }
+
         CommonResponse<?> commonResponse = CommonResponse.fail(errorCode);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

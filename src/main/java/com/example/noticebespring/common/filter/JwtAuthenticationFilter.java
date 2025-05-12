@@ -42,9 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            log.error("Authorization header is missing or does not start with 'Bearer '");
+            log.error("Authorization header가 없거나 'Bearer '로 시작하지 않습니다.");
             // 예외로 던져서 EntryPoint로 넘김
-            AuthenticationException authEx = new AuthenticationServiceException("Missing or invalid Authorization header");
+            AuthenticationException authEx = new AuthenticationServiceException("Authorization header 가 없거나 유효하지 않습니다.");
             jwtAuthenticationEntryPoint.commence(request, response, authEx);
             return;
         }
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         authentication.getAuthorities());
                 log.info("User authenticated successfully. User ID: {}", userId);
             } else {
-                log.warn("유효하지 않은 JWT 토큰 - URI: {}", request.getRequestURI());
+                log.error("유효하지 않은 JWT 토큰 - URI: {}", request.getRequestURI());
                 throw new BadCredentialsException("유효하지 않은 JWT 토큰입니다. ");
             }
         } catch (Exception e) {
