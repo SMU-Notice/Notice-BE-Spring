@@ -130,7 +130,7 @@ public class MainPageController {
         try {
             List<TopViewDto> topViewDtoList = topViewService.getTop7PostsByBoardName("통합공지");
             return CommonResponse.ok(topViewDtoList);
-        } catch (EntityNotFoundException e) {
+        } catch (IllegalArgumentException e){
             return CommonResponse.fail(ErrorCode.NOT_FOUND_POST);
         } catch (Exception e) {
             return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
