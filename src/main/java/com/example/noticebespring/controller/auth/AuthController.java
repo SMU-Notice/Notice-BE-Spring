@@ -131,7 +131,7 @@ public class AuthController {
             //2. 액세스 토큰 발급
             String accessToken = socialTokenService.getToken(code, state);
             if (accessToken == null || accessToken.isEmpty()){
-                log.warn("액세스 토큰 발급 실패 - provider: {}", provider);
+                log.error("액세스 토큰 발급 실패 - provider: {}", provider);
 
                 return CommonResponse.fail(ErrorCode.UNAUTHORIZED);
             }
