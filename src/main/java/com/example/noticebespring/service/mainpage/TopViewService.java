@@ -36,7 +36,7 @@ public class TopViewService {
             throw ex;
         }
 
-        log.info("월간 인기 공지 조회 성공 - boardName: {}");
+        log.info("월간 인기 공지 조회 성공 - boardName: {}", name);
 
         return posts;
     }
