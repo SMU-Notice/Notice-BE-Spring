@@ -82,8 +82,13 @@ public class BookmarkFolderService {
     // 북마크 폴더 목록 조회
     @Transactional(readOnly = true)
     public List<BookmarkFolderDto> getBookmarkFolders(Integer userId){
-        log.debug("북마크 폴더 목록 조회 - userId: {}", userId);
-        return bookmarkFolderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        log.debug("북마크 폴더 목록 조회 시작 - userId: {}", userId);
+
+        List<BookmarkFolderDto> folders = bookmarkFolderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        log.info("북마크 폴더 목록 조회 성공 - userId: {}, 폴더 수: {}", userId, folders.size());
+
+        return folders;
     }
 
     // 폴더 이름 변경
@@ -122,13 +127,13 @@ public class BookmarkFolderService {
         BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
                 .orElseThrow(()-> {
                     EntityNotFoundException ex = new EntityNotFoundException("북마크 폴더가 존재하지 않습니다.");
-                    log.warn("폴더 존재하지 않음 - folderId: {}", folderId, ex);
+                    log.error("폴더 존재하지 않음 - folderId: {}", folderId, ex);
                     return ex;
                 });
 
         if(!folder.getUser().getId().equals(userId)){
             AccessDeniedException ex = new AccessDeniedException("해당 폴더에 대한 권한이 없습니다.");
-            log.warn("권한 없음 - userId: {}, folderId: {}", userId, folderId, ex);
+            log.error("권한 없음 - userId: {}, folderId: {}", userId, folderId, ex);
             throw ex;
         }
 

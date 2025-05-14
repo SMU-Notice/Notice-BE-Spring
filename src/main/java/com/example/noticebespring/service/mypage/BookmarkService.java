@@ -46,7 +46,7 @@ public class BookmarkService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     CustomException ex = new CustomException(ErrorCode.NOT_FOUND_USER);
-                    log.warn("사용자를 찾을 수 없음 - userId: {}", userId, ex);
+                    log.error("사용자를 찾을 수 없음 - userId: {}", userId, ex);
                     return ex;
                 });
         Post post = postRepository.findById(postId)
