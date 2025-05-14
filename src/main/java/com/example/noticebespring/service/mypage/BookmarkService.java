@@ -36,13 +36,7 @@ public class BookmarkService {
         //북마크된 게시물이 없을 경우 그냥 비어있는 상태로 반환
         BookmarkedPostsDto posts = bookmarkRepository.findAllPostsById(userId, folderId);
 
-        if(posts == null){
-            EntityNotFoundException ex = new EntityNotFoundException("폴더를 찾을 수 없습니다");
-            log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId, ex);
-            throw ex;
-        }
-
-        log.debug("북마크된 게시물 조회 성공 - folder: {}, posts: {}", folderId, posts.posts().size());
+        log.info("북마크된 게시물 조회 성공 - folder: {}, posts: {}", folderId, posts.posts().size());
         return posts;
     }
 
