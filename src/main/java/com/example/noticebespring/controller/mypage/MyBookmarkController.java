@@ -81,7 +81,7 @@ public class MyBookmarkController {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true)
             }
     )
-    @GetMapping("/")
+    @GetMapping("")
     public CommonResponse<List<BookmarkFolderDto>> getBookmarkFolders() {
         //인증된 사용자의 id 가져오기
         Integer userId = userService.getAuthenticatedUser().getId();
@@ -136,7 +136,7 @@ public class MyBookmarkController {
                     @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true)
             }
     )
-    @PostMapping("/")
+    @PostMapping("")
     public CommonResponse<BookmarkFolderDto> createNewBookmarkFolder(){
         Integer userId = userService.getAuthenticatedUser().getId();
 
@@ -353,18 +353,18 @@ public class MyBookmarkController {
                                                 {
                                                     "id": 1,
                                                     "title": "2차 수강신청",
-                                                    "viewCount: "2910",
-                                                    "hasReference: "true",
+                                                    "viewCount": "2910",
+                                                    "hasReference": "true",
                                                     "postedDate": "2025-03-30T12:34:56"
-                                                    "isBookmarked: "true"
+                                                    "isBookmarked": "true"
                                                 },
                                                 {
                                                     "id": 2,
                                                     "title": "장학금 안내",
-                                                    "viewCount: "4732",
-                                                    "hasReference: "false",
+                                                    "viewCount": "4732",
+                                                    "hasReference": "false",
                                                     "postedDate": "2025-03-30T12:35:00",
-                                                    "isBookmarked: "true"
+                                                    "isBookmarked": "true"
                                                 }
                                             ],
                                             "error": null
