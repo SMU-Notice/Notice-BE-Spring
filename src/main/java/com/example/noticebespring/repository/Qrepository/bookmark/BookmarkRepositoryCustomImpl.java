@@ -2,7 +2,7 @@ package com.example.noticebespring.repository.Qrepository.bookmark;
 
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
-import com.example.noticebespring.dto.PostItemDto;
+import com.example.noticebespring.dto.mypage.bookmark.BookmarkedPostItemDto;
 import com.example.noticebespring.dto.mypage.bookmark.BookmarkedPostsDto;
 import com.example.noticebespring.entity.QBookmark;
 import com.example.noticebespring.entity.QBookmarkFolder;
@@ -43,24 +43,21 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
                 throw ex;
             }
 
-            List<PostItemDto> posts = queryFactory
+            List<BookmarkedPostItemDto> posts = queryFactory
                     .select(Projections.constructor(
-                            PostItemDto.class,
+                            BookmarkedPostItemDto.class,
                             post.id,
-                            Expressions.asString(""),
                             post.title,
                             post.viewCount,
                             post.hasReference,
                             post.postedDate,
-                            Expressions.asBoolean(bookmark.id.isNotNull()),  // 수정된 부분
-                            Expressions.asBoolean(false)
+                            Expressions.asBoolean(true)
                     ))
                     .from(bookmark)
                     .join(bookmark.bookmarkFolder, bookmarkFolder)
                     .join(bookmark.post, post)
                     .where(bookmark.bookmarkFolder.id.eq(folderId)
-                            .and(bookmarkFolder.user.id.eq(userId))
-                    )
+                            .and(bookmarkFolder.user.id.eq(userId)))
                     .fetch();
 
             return new BookmarkedPostsDto(folderName, posts);
