@@ -82,8 +82,13 @@ public class BookmarkFolderService {
     // 북마크 폴더 목록 조회
     @Transactional(readOnly = true)
     public List<BookmarkFolderDto> getBookmarkFolders(Integer userId){
-        log.debug("북마크 폴더 목록 조회 - userId: {}", userId);
-        return bookmarkFolderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        log.debug("북마크 폴더 목록 조회 시작 - userId: {}", userId);
+
+        List<BookmarkFolderDto> folders = bookmarkFolderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        log.info("북마크 폴더 목록 조회 성공 - userId: {}, 폴더 수: {}", userId, folders.size());
+
+        return folders;
     }
 
     // 폴더 이름 변경
