@@ -1,5 +1,7 @@
 package com.example.noticebespring.repository.Qrepository.bookmark;
 
+import com.example.noticebespring.common.response.CustomException;
+import com.example.noticebespring.common.response.ErrorCode;
 import com.example.noticebespring.dto.PostItemDto;
 import com.example.noticebespring.dto.mypage.bookmark.BookmarkedPostsDto;
 import com.example.noticebespring.entity.QBookmark;
@@ -33,21 +35,19 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
                 .fetchOne();
 
         if (folderName == null) {
-            throw new IllegalArgumentException("북마크 폴더가 존재하지 않거나 권한이 없습니다.");
+            throw new CustomException(ErrorCode.NOT_FOUND_FOLDER);
         }
 
         List<PostItemDto> posts = queryFactory
-                .select(Projections.constructor(
-                        PostItemDto.class,
-                        post.id,
-                        Expressions.asString(""),
-                        post.title,
-                        post.viewCount,
-                        post.hasReference,
-                        post.postedDate,
-                        bookmark.id.isNotNull(),
-                        Expressions.asBoolean(false)
+                .select(Projections.fields(PostItemDto.class,
+                        post.id.as("id"),
+                        post.title.as("title"),
+                        post.viewCount.as("viewCount"),
+                        post.hasReference.as("hasReference"),
+                        post.postedDate.as("postedDate"),
+                        bookmark.id.isNotNull().as("isBookmarked")
                 ))
+                // boardName, postType, isPostedToday는 제외
                 .from(bookmark)
                 .join(bookmark.bookmarkFolder, bookmarkFolder)
                 .join(bookmark.post, post)

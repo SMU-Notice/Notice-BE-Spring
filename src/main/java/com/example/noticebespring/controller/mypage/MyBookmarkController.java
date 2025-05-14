@@ -415,7 +415,7 @@ public class MyBookmarkController {
         try {
             BookmarkedPostsDto posts = bookmarkService.getBookmarkedPosts(userId, folderId);
             return CommonResponse.ok(posts);
-        } catch (EntityNotFoundException e){
+        } catch (CustomException e){
             return CommonResponse.fail(ErrorCode.NOT_FOUND_FOLDER);
         } catch (Exception e){
             return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
