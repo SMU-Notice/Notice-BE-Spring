@@ -127,13 +127,13 @@ public class BookmarkFolderService {
         BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
                 .orElseThrow(()-> {
                     EntityNotFoundException ex = new EntityNotFoundException("북마크 폴더가 존재하지 않습니다.");
-                    log.error("폴더 존재하지 않음 - folderId: {}", folderId, ex);
+                    log.warn("폴더 존재하지 않음 - folderId: {}", folderId, ex);
                     return ex;
                 });
 
         if(!folder.getUser().getId().equals(userId)){
             AccessDeniedException ex = new AccessDeniedException("해당 폴더에 대한 권한이 없습니다.");
-            log.error("권한 없음 - userId: {}, folderId: {}", userId, folderId, ex);
+            log.warn("권한 없음 - userId: {}, folderId: {}", userId, folderId, ex);
             throw ex;
         }
 
