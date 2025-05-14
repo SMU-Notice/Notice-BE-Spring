@@ -31,7 +31,7 @@ public class BookmarkService {
     // 단일 북마크 폴더에 담긴 북마크된 게시물 조회
     @Transactional(readOnly = true)
     public BookmarkedPostsDto getBookmarkedPosts(Integer userId, Integer folderId) {
-        log.debug("북마크된 게시물 조회 시작 - folder: {}", folderId);
+        log.info("북마크된 게시물 조회 시작 - folder: {}", folderId);
 
         //북마크된 게시물이 없을 경우 그냥 비어있는 상태로 반환
         BookmarkedPostsDto posts = bookmarkRepository.findAllPostsById(userId, folderId);

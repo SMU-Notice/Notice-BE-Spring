@@ -39,15 +39,17 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
         }
 
         List<PostItemDto> posts = queryFactory
-                .select(Projections.fields(PostItemDto.class,
-                        post.id.as("id"),
-                        post.title.as("title"),
-                        post.viewCount.as("viewCount"),
-                        post.hasReference.as("hasReference"),
-                        post.postedDate.as("postedDate"),
-                        bookmark.id.isNotNull().as("isBookmarked")
+                .select(Projections.constructor(
+                        PostItemDto.class,
+                        post.id,
+                        Expressions.asString(""),
+                        post.title,
+                        post.viewCount,
+                        post.hasReference,
+                        post.postedDate,
+                        bookmark.id.isNotNull(),
+                        Expressions.asBoolean(false)
                 ))
-                // boardName, postType, isPostedToday는 제외
                 .from(bookmark)
                 .join(bookmark.bookmarkFolder, bookmarkFolder)
                 .join(bookmark.post, post)
