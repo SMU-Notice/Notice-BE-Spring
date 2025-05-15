@@ -44,6 +44,9 @@ public class PostService {
                 .findFirstByIdGreaterThanOrderByIdAsc(postId)
                 .orElse(null);
         
+        String name = post.getBoard().getName(); //게시판 이름(notion 참고)
+        String type = post.getType(); //학사 일반 사회봉사 등등 값 들어가고, 메인게시판이 아닌경우 default값 들어가게 됨
+        
         //해당 게시글 모든 사진 조회
         List<PostPicture> pictures = postPictureRepository.findByPost_Id(postId);
         List<String> pictureSummary = null;
@@ -70,6 +73,8 @@ public class PostService {
                 .pictureSummary(pictureSummary)
                 .viewCount(post.getViewCount())
                 .postedDate(post.getPostedDate())
+                .name(name)
+                .type(type)
                 .previousPostId(previous != null ? previous.getId() : null)
                 .previousPostTitle(previous != null ? previous.getTitle() : null)
                 .nextPostId(next != null ? next.getId()    : null)

@@ -29,9 +29,7 @@ public class GlobalExceptionHandler {
     // 기본 예외
     @ExceptionHandler(value = {Exception.class})
     public CommonResponse<?> handleException(Exception e) {
-        if(e instanceof AuthenticationException){
-            return null;
-        }
+        log.error("Exception type: {}, message: {}", e.getClass().getName(), e.getMessage(), e);
         log.error("handleException() in GlobalExceptionHandler throw Exception : {}", e.getMessage());
         e.printStackTrace();
         return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);

@@ -26,12 +26,12 @@ public class SocialConfig {
         } else {
             log.info("SocialConfig loaded providers:");
             for (Map.Entry<String, Provider> entry : providers.entrySet()) {
-                log.info("Provider: {}", entry.getKey());
-                log.info("  clientId: {}", entry.getValue().getClientId());
-                log.info("  clientSecret: {}", entry.getValue().getClientSecret());
-                log.info("  redirectUri: {}", entry.getValue().getRedirectUri());
-                log.info("  tokenUri: {}", entry.getValue().getTokenUri());
-                log.info("  userInfoUri: {}", entry.getValue().getUserInfoUri());
+                log.info("Provider: '{}'", entry.getKey());
+                log.info("  clientId: '{}'", entry.getValue().getClientId());
+                log.info("  clientSecret: '{}'", entry.getValue().getClientSecret());
+                log.info("  redirectUri: '{}'", entry.getValue().getRedirectUri());
+                log.info("  tokenUri: '{}'", entry.getValue().getTokenUri());
+                log.info("  userInfoUri: '{}'", entry.getValue().getUserInfoUri());
             }
         }
     }

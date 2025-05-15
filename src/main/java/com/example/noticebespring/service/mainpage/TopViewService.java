@@ -30,12 +30,13 @@ public class TopViewService {
         List<TopViewDto> posts = postRepository.findTop7PostsByBoardName(name);
 
         if (posts.isEmpty()){
+            log.warn("[WARN] 인기 공지 게시물이 없습니다 - boardName: {}", name);
             EntityNotFoundException ex = new EntityNotFoundException(name + " 게시판에 게시물이 존재하지 않습니다.");
             log.warn("게시물이 존재하지 않음 - boardName: {}", name, ex);
             throw ex;
         }
 
-        log.info("월간 인기 공지 조회 성공 - boardName: {}");
+        log.info("월간 인기 공지 조회 성공 - boardName: {}", name);
 
         return posts;
     }

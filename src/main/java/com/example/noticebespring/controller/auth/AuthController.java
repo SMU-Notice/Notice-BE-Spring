@@ -37,7 +37,6 @@ public class AuthController {
     private final UserRepository userRepository;
     private final SocialAccountRepository socialAccountRepository;
 
-
     @Operation(
             summary = "소셜 로그인",
             description = "인증 프로바이더(구글, 카카오, 네이버)를 통해 로그인 후 자체적으로 JWT 토큰 발급",
@@ -132,7 +131,7 @@ public class AuthController {
             //2. 액세스 토큰 발급
             String accessToken = socialTokenService.getToken(code, state);
             if (accessToken == null || accessToken.isEmpty()){
-                log.warn("액세스 토큰 발급 실패 - provider: {}", provider);
+                log.error("액세스 토큰 발급 실패 - provider: {}", provider);
 
                 return CommonResponse.fail(ErrorCode.UNAUTHORIZED);
             }
