@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 import java.util.Queue;
 
 // JWT 토큰 발급 및 검증을 담당
@@ -27,7 +28,8 @@ public class JwtService {
         this.jwtProperties = jwtProperties;
     }
 
-    public String generateToken(Integer userId, String email){
+    // JWT 토큰 생성
+    public String generateToken(Integer userId, String email) {
         log.info("Generating JWT token for userId: {}, email: {}", userId, email);
         SecretKey key = secretKeyManager.getCurrentKey();
         String token = Jwts.builder()
@@ -40,18 +42,19 @@ public class JwtService {
         return token;
     }
 
-    public boolean isTokenValid(String token){
+    // JWT 토큰 유효성 검사 (현재 키 + 이전 키 리스트 포함)
+    public boolean isTokenValid(String token) {
         log.info("Validating JWT token");
         SecretKey currentKey = secretKeyManager.getCurrentKey();
-        Queue<SecretKey> previousKeys = secretKeyManager.getPreviousKeys();
+        List<SecretKey> previousKeys = secretKeyManager.getPreviousKeys();
 
-        if (isTokenValidWithKey(token, currentKey)){
+        if (isTokenValidWithKey(token, currentKey)) {
             log.info("Token is valid with current key");
             return true;
         }
 
-        for (SecretKey prekey : previousKeys){
-            if (isTokenValidWithKey(token, prekey)){
+        for (SecretKey preKey : previousKeys) {
+            if (isTokenValidWithKey(token, preKey)) {
                 log.info("Token is valid with previous key");
                 return true;
             }
@@ -61,7 +64,8 @@ public class JwtService {
         return false;
     }
 
-    private boolean isTokenValidWithKey(String token, SecretKey key){
+    // 특정 키로 JWT 토큰 유효성 검사
+    private boolean isTokenValidWithKey(String token, SecretKey key) {
         try {
             Jwts.parser()
                     .verifyWith(key)
@@ -70,29 +74,19 @@ public class JwtService {
                     .getPayload();
             return true;
         } catch (ExpiredJwtException | SignatureException | MalformedJwtException | SecurityException | IllegalArgumentException e) {
-            log.warn("JWT validation failed with key: {}", key, e);
+            log.warn("JWT validation failed with key", e);
             return false;
         }
     }
 
-    public String extractToken(HttpServletRequest request) {
-        log.info("Extracting token from request");
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            String extractedToken = bearerToken.substring(7);
-            log.info("Extracted token: {}", extractedToken);
-            return extractedToken;
-        }
-        log.warn("Authorization header missing or does not start with Bearer");
-        return null;
-    }
-
+    // JWT에서 사용자 ID 추출
     public Integer extractUserId(String token) {
         log.info("Extracting user ID from token");
-        SecretKey key = secretKeyManager.getCurrentKey();
+        SecretKey currentKey = secretKeyManager.getCurrentKey();
+
         try {
             Claims claims = Jwts.parser()
-                    .verifyWith(key)
+                    .verifyWith(currentKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
@@ -114,3 +108,4 @@ public class JwtService {
         }
     }
 }
+
