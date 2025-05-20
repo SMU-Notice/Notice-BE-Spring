@@ -22,7 +22,7 @@ public class Bookmark {
     @JoinColumn(name = "bookmark_folder_id",nullable = false)
     private BookmarkFolder bookmarkFolder;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 }
