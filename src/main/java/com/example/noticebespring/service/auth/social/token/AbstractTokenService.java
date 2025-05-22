@@ -51,10 +51,9 @@ public abstract class AbstractTokenService implements SocialTokenService {
         params.add("grant_type", "authorization_code");
         params.add("redirect_uri", config.getRedirectUri());
 
-        if (provider == "naver" && state != null && !state.isEmpty()) {
+        if ("naver".equals(provider) && state != null && !state.isEmpty()) {
             params.add("state", state);
         }
-
 
         String responseBody = restClient.post()
                 .uri(config.getTokenUri())
