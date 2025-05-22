@@ -17,13 +17,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-
-@Slf4j
 @RestController
 @RequestMapping("/api/mypage/bookmark")
 @RequiredArgsConstructor
@@ -239,7 +236,6 @@ public class MyBookmarkController {
     )
     @PatchMapping("/{folderId}")
     public CommonResponse<BookmarkFolderDto> updateBookmarkFolderName(@PathVariable("folderId") Integer folderId, @RequestParam String newName) {
-        log.info("Received request: folderId={}, newName={}", folderId, newName);
         Integer userId = userService.getAuthenticatedUser().getId();
         try {
             BookmarkFolderDto updateFolder = folderService.updateBookmarkFolderName(userId, folderId, newName);

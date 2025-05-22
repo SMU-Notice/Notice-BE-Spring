@@ -13,11 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 //모든 공지, 상세 게시물 페이지에서의 게시물 북마크 추가 및 제거 컨트롤러
-@Slf4j
 @RestController
 @RequestMapping("/api/bookmark")
 @Tag(name = "게시물 북마크 추가 제거 API", description = "게시물별 북마크 추가 및 제거 기능 (모든 공지, 상세 게시물 페이지에 적용)")
@@ -96,7 +94,6 @@ public class PostBookmarkController {
     )
     @PostMapping("/add/{folderId}/{postId}")
     public CommonResponse<Integer> addBookmark(@PathVariable("folderId") Integer folderId, @PathVariable("postId") Integer postId){
-        log.info("Received request: folderId={}, postId={}", folderId, postId);
         Integer userId = userService.getAuthenticatedUser().getId();
 
         try {

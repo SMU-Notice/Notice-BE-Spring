@@ -31,7 +31,7 @@ public class SecretKeyManager {
 
         byte[] keyBytes = Base64.getDecoder().decode(secretString);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        log.info("정적 JWT 비밀 키가 초기화되었습니다.");
+        log.debug("정적 JWT 비밀 키가 초기화되었습니다.");
     }
 
     public boolean validateToken(String token) {
@@ -42,7 +42,7 @@ public class SecretKeyManager {
                     .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
-            log.warn("토큰 검증 실패", e);
+            log.warn("토큰 검증 실패", e.getMessage());
             return false;
         }
     }

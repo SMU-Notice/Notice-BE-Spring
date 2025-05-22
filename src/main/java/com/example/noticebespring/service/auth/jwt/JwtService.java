@@ -29,8 +29,8 @@ public class JwtService {
     }
 
     // JWT 토큰 생성
-    public String generateToken(Integer userId, String email) {
-        log.info("Generating JWT token for userId: {}, email: {}", userId, email);
+    public String generateToken(Integer userId) {
+        log.debug("Generating JWT token for userId: {}", userId);
         SecretKey key = secretKeyManager.getSecretKey();
         String token = Jwts.builder()
                 .subject(String.valueOf(userId))
@@ -38,19 +38,19 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(key)
                 .compact();
-        log.info("Generated token: {}", token);
+//        log.info("Generated token: {}", token);
         return token;
     }
 
     // JWT 토큰 유효성 검사 (현재 키 + 이전 키 리스트 포함)
     public boolean isTokenValid(String token) {
-        log.info("Validating JWT token");
+        log.debug("Validating JWT token");
         return secretKeyManager.validateToken(token);
     }
 
     // JWT에서 사용자 ID 추출
     public Integer extractUserId(String token) {
-        log.info("Extracting user ID from token");
+        log.debug("Extracting user ID from token");
         try {
             Claims claims = Jwts.parser()
                     .verifyWith(secretKeyManager.getSecretKey())
