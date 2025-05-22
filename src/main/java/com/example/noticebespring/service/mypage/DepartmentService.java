@@ -31,7 +31,7 @@ public class DepartmentService {
     // 사용자의 학과 정보 불러오기
     @Transactional(readOnly = true)
     public List<DepartmentDto> getDepartment(Integer userId){
-        log.info("사용자의 학과 정보 조회 시작 : userId: {}", userId);
+        log.debug("사용자의 학과 정보 조회 시작 : userId: {}", userId);
         try {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));

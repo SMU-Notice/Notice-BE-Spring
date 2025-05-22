@@ -29,7 +29,7 @@ public abstract class AbstractTokenService implements SocialTokenService {
 
     @Override       
     public String getToken(String code, String state) { // 인가 코드로 액세스 토큰 반환
-        logger.info("액세스 토큰 요청 시작 - provider: {}, code: {}", provider, code);
+        logger.debug("액세스 토큰 요청 시작 - provider: {}", provider);
         SocialConfig.Provider config = socialProviderFactory.getProviderConfig(provider);
         String tokenUri = config.getTokenUri();
 
@@ -51,10 +51,9 @@ public abstract class AbstractTokenService implements SocialTokenService {
         params.add("grant_type", "authorization_code");
         params.add("redirect_uri", config.getRedirectUri());
 
-        if (provider == "naver" && state != null && !state.isEmpty()) {
+        if ("naver".equals(provider) && state != null && !state.isEmpty()) {
             params.add("state", state);
         }
-
 
         String responseBody = restClient.post()
                 .uri(config.getTokenUri())
@@ -64,17 +63,15 @@ public abstract class AbstractTokenService implements SocialTokenService {
                 .retrieve()
                 .body(String.class);
 
-        logger.info("토큰 응답 - provider: {}, response: {}", provider, responseBody);
-
         try {
             JsonNode jsonNode = objectMapper.readTree(responseBody);
             String accessToken = jsonNode.get("access_token").asText();
-            logger.info("액세스 토큰 발급 성공 - provider: {}, token: {}", provider, accessToken);
+            logger.info("액세스 토큰 발급 성공 - provider: {}", provider);
             return accessToken;
 
         } catch (Exception e) {
-            logger.error("액세스 토큰 파싱 실패 - provider: {}, response: {}", provider, responseBody, e);
-            throw new RuntimeException(provider + "의 액세스 토큰을 불러오는데 실패했습니다.", e);
+            logger.error("액세스 토큰 파싱 실패 - provider: {}", provider);
+            throw new RuntimeException(provider + "의 액세스 토큰을 불러오는데 실패했습니다.");
         }
     }
 }

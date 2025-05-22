@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/mypage/department")
+@RequestMapping("/api/mypage/department")
 @Tag(name = "회원정보(학과) API", description = "마이페이지의 회원 정보 내 학과 조회, 추가, 제거 API")
 public class MyDepartmentController {
     private final DepartmentService departmentService;
@@ -66,7 +66,7 @@ public class MyDepartmentController {
                             }),
             }
     )
-    @GetMapping("/")
+    @GetMapping("")
     public CommonResponse<List<DepartmentDto>> getDepartmentList(){
         Integer userId = userService.getAuthenticatedUser().getId();
         try{
@@ -175,7 +175,7 @@ public class MyDepartmentController {
                     )
             )
     )
-    @PostMapping("/")
+    @PostMapping("")
     public CommonResponse<DepartmentDto> addDepartment(@RequestBody DepartmentDto departmentDto){
         Integer userId = userService.getAuthenticatedUser().getId();
         try {
@@ -290,7 +290,7 @@ public class MyDepartmentController {
                     )
             )
     )
-    @DeleteMapping("/")
+    @DeleteMapping("")
     public CommonResponse<Void> removeDepartment(@RequestBody DepartmentDto departmentDto){
         Integer userId = userService.getAuthenticatedUser().getId();
         try{

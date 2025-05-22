@@ -34,7 +34,7 @@ public class AllNoticeService {
                 log.debug("조건을 만족하는 게시물이 없음 - user : {}, boardName : {}, postType : {}, searchTerm : {}, startDate: {}, endDate: {}",
                         userId, boardName, postType,searchTerm, startDate, endDate);
             } else{
-                log.debug("모든 공지 게시물 조회 성공 - user: {}, postCount: {}", userId, posts.size());
+                log.info("모든 공지 게시물 조회 성공 - user: {}, postCount: {}", userId, posts.size());
             }
             return posts;
         } catch (Exception e){

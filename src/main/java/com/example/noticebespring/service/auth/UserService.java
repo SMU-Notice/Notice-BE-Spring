@@ -13,23 +13,12 @@ import org.springframework.stereotype.Service;
 import com.example.noticebespring.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
-
-    // JWT로 이미 검증된 사용자에 대한 정보를 User 엔티티로 반환
-    public User getUserFromValidatedToken(String token) {
-        Integer userId = Optional.ofNullable(jwtService.extractUserId(token))
-                .orElseThrow(() -> new CustomException(ErrorCode.JWT_TOKEN_ERROR));
-
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
-    }
 
     /**
      * 인증된 사용자 정보를 SecurityContext에서 가져옵니다.

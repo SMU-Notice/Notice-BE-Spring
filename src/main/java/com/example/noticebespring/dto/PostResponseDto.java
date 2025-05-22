@@ -21,6 +21,10 @@ public class PostResponseDto {
     private Integer viewCount;		//조회수
     private LocalDate postedDate;	//게시일
     
+    private String name;
+    private String type;
+    
+    
     private Integer previousPostId;
     private String previousPostTitle;
     private Integer nextPostId;

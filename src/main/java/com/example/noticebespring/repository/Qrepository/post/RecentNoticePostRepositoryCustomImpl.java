@@ -53,7 +53,6 @@ public class RecentNoticePostRepositoryCustomImpl implements RecentNoticePostRep
             return posts;
         } catch (Exception e) {
             System.err.println("Error in findRecent7Posts: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
     }

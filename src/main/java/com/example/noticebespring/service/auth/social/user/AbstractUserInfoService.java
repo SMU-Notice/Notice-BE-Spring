@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public abstract class AbstractUserInfoService implements SocialUserInfoService {
     @Transactional
     @Override   // 액세스 토큰으로 사용자 정보 처리
     public User processUser(String accessToken) {
-        logger.info("사용자 정보 처리 시작 - provider: {}", provider);
+        logger.debug("사용자 정보 처리 시작 - provider: {}", provider);
         SocialConfig.Provider config = providerFactory.getProviderConfig(provider);
 
         String userInfoResponse = restClient.get()
@@ -52,24 +53,52 @@ public abstract class AbstractUserInfoService implements SocialUserInfoService {
             JsonNode jsonNode = objectMapper.readTree(userInfoResponse);
             String providerId = extractProviderId(jsonNode);
             String email = extractEmail(jsonNode); // 마이페이지에서 설정 가능
-            logger.info("사용자 정보 추출 - provider: {}, providerId: {}, email: {}", provider, providerId, email);
+
+            //카카오처럼 이메일이 null인 경우 임시 이메일 생성 (테스트에만 적용)
+            if (email == null || email.isBlank()) {
+                String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+                email = randomString + "@" + provider.toLowerCase() + ".com";
+                logger.info("이메일이 제공되지 않아 임시 이메일 생성 - provider: {}", provider);
+            }
+
+            logger.info("사용자 정보 추출 - provider: {}", provider);
+            if (email == null) {
+                logger.warn("이메일이 제공되지 않았습니다. provider: {}", provider);
+                email = "";
+            }
 
             // 1. 동일 프로바이더의 계정이 이미 존재하는지 확인 -> 동일 프로바이더로 로그인
             Optional<SocialAccount> existingSocialAccount =
             socialAccountRepository.findByProviderAndProviderId(SocialAccount.Provider.valueOf(provider.toUpperCase()), providerId);
             if(existingSocialAccount.isPresent()){
-                logger.info("기존 사용자 로그인 - provider: {}, userId: {}", provider, existingSocialAccount.get().getUser().getId());
+//                logger.info("기존 사용자 로그인 - provider: {}, userId: {} ", provider, existingSocialAccount.get().getUser().getId());
                 return existingSocialAccount.get().getUser();
 
             }
 
-            //2. 신규 사용자일 경우 -> 새로운 소셜 계정 생성 및 회원가입 처리
+            // 2. 이메일로 기존 사용자 있는지 확인
+            Optional<User> existingUserByEmail = userRepository.findByEmail(email);
+            if (existingUserByEmail.isPresent()) {
+                User existingUser = existingUserByEmail.get();
+//                logger.info("이메일 중복으로 기존 유저에 소셜 계정 추가 - email: {}, userId: {}", email, existingUser.getId());
+
+                SocialAccount socialAccount = SocialAccount.builder()
+                        .user(existingUser)
+                        .provider(getProviderType())
+                        .providerId(providerId)
+                        .build();
+                socialAccountRepository.save(socialAccount);
+
+                return existingUser;
+            }
+
+            //3. 신규 사용자일 경우 -> 새로운 소셜 계정 생성 및 회원가입 처리
             User user = User.builder()
                     .email(email)
                     .createdAt(LocalDateTime.now())
                     .build();
             user = userRepository.save(user);
-            logger.info("신규 사용자 등록 - provider: {}, userId: {}", provider, user.getId());
+//            logger.info("신규 사용자 등록 - provider: {}, userId: {}", provider, user.getId());
 
 
             SocialAccount socialAccount = SocialAccount.builder()
