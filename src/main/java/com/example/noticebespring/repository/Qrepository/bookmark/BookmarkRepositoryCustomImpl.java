@@ -39,7 +39,7 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
 
             if (folderName == null) {
                 CustomException ex = new CustomException(ErrorCode.NOT_FOUND_FOLDER);
-                log.error("북마크 폴더 없음 - userId: {}, folderId: {}", userId, folderId, ex);
+                log.error("북마크 폴더 없음 - userId: {}, folderId: {}", userId, folderId);
                 throw ex;
             }
 
@@ -63,7 +63,7 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
             return new BookmarkedPostsDto(folderName, posts);
 
         } catch (Exception e) {
-            log.error("북마크 게시물 조회 중 예외 발생 - userId: {}, folderId: {}", userId, folderId, e);
+            log.error("북마크 게시물 조회 중 예외 발생 - userId: {}, folderId: {}", userId, folderId);
             throw e;
         }
     }

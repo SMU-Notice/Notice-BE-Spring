@@ -14,11 +14,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/main")
 @Tag(name = "메인 API", description = "메인 페이지 API (월간 인기 공지, 모든 공지)")

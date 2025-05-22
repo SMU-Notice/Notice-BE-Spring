@@ -36,7 +36,7 @@ public class SneakyAuthController {
         User user = userService.getUserByEmail(loginForm.email());
 
         // 4. JWT 토큰 발급
-        String jwtToken = jwtService.generateToken(user.getId(), "nothing");
+        String jwtToken = jwtService.generateToken(user.getId());
         if (jwtToken == null || jwtToken.isEmpty()) {
             return CommonResponse.fail(ErrorCode.JWT_GENERATION_FAILED);
         }
