@@ -122,7 +122,7 @@ public class AuthController {
             )
     @PostMapping("/login/{provider}")
     public CommonResponse<String> socialLogin(@PathVariable String provider, @RequestParam String code, @RequestParam(required = false) String state){
-            log.info("소셜 로그인 요청 - provider: {}, code: {}, state: {}", provider, code, state);
+            log.debug("소셜 로그인 요청 - provider: {}, code: {}, state: {}", provider, code, state);
 
             //1. 프로바이더에 따른 서비스 불러오기
             SocialTokenService socialTokenService = socialTokenServiceFactory.getService(provider);
@@ -135,7 +135,7 @@ public class AuthController {
 
                 return CommonResponse.fail(ErrorCode.UNAUTHORIZED);
             }
-            log.info("액세스 토큰 발급 성공 - provider: {}, token: {}", provider, accessToken);
+            log.debug("액세스 토큰 발급 성공 - provider: {}", provider);
 
 
             //3. 사용자 정보 처리
@@ -144,15 +144,15 @@ public class AuthController {
                 log.error("사용자 정보 처리 실패 - provider: {}", provider);
                 return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
             }
-            log.info("사용자 정보 처리 성공 - provider: {}, userId: {}", provider, user.getId());
+            log.debug("사용자 정보 처리 성공 - provider: {}, userId: {}", provider, user.getId());
 
             //4. JWT 토큰 발급
-            String jwtToken = jwtService.generateToken(user.getId(), user.getEmail());
+            String jwtToken = jwtService.generateToken(user.getId());
             if (jwtToken == null || jwtToken.isEmpty()){
                 log.error("JWT 토큰 발급 실패 - userId: {}", user.getId());
                 return CommonResponse.fail(ErrorCode.JWT_GENERATION_FAILED);
             }
-            log.info("소셜 로그인 완료 - provider: {}, userId: {}, jwtToken: {}", provider, user.getId(), jwtToken);
+            log.info("소셜 로그인 완료 - provider: {}, userId: {}", provider, user.getId());
 
             return CommonResponse.ok(jwtToken);
 
@@ -273,7 +273,7 @@ public class AuthController {
     @Transactional // 트랜잭션 관리
 
     public CommonResponse<Void> withdraw() {
-        log.info("회원 탈퇴 요청 수신");
+        log.debug("회원 탈퇴 요청 수신");
         Integer userId = userService.getAuthenticatedUser().getId();
 
         try {

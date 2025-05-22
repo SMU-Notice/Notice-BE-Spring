@@ -21,8 +21,8 @@ public class SocialProviderFactory {
         if (config == null) {
             throw new IllegalArgumentException("해당 제공자는 지원되지 않습니다.");
         }
-        log.info("Provider config loaded - provider: {}, tokenUri: {}, clientId: {}",
-                provider, config.getTokenUri(), config.getClientId());
+//        log.info("Provider config loaded - provider: {}, tokenUri: {}, clientId: {}",
+//                provider, config.getTokenUri(), config.getClientId());
         return config;
     }
 

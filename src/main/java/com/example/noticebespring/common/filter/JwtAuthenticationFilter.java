@@ -66,9 +66,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.info("SecurityContext에 Authentication 설정 완료. principal={}, authorities={}",
-                        authentication.getPrincipal(),
-                        authentication.getAuthorities());
+//                log.info("SecurityContext에 Authentication 설정 완료. principal={}, authorities={}",
+//                        authentication.getPrincipal(),
+//                        authentication.getAuthorities());
                 log.info("User authenticated successfully. User ID: {}", userId);
             } else {
                 log.error("유효하지 않은 JWT 토큰 - URI: {}", request.getRequestURI());
@@ -89,14 +89,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 메인, 로그인 화면, 인증 URL은 필터링에서 제외함
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        log.info("==== [요청 확인] ====");
-        log.info("requestURL     = {}", request.getRequestURL());
-        log.info("requestURI     = {}", request.getRequestURI());
-        log.info("servletPath    = {}", request.getServletPath());
-        log.info("queryString    = {}", request.getQueryString());
-        log.info("method         = {}", request.getMethod());
-        log.info("User-Agent     = {}", request.getHeader("User-Agent"));
-        log.info("Referer        = {}", request.getHeader("Referer"));
+//        log.info("==== [요청 확인] ====");
+//        log.info("requestURL     = {}", request.getRequestURL());
+//        log.info("requestURI     = {}", request.getRequestURI());
+//        log.info("servletPath    = {}", request.getServletPath());
+//        log.info("queryString    = {}", request.getQueryString());
+//        log.info("method         = {}", request.getMethod());
+//        log.info("User-Agent     = {}", request.getHeader("User-Agent"));
+//        log.info("Referer        = {}", request.getHeader("Referer"));
         String path = request.getServletPath();
         boolean shouldNotFilter =
                 request.getMethod().equalsIgnoreCase("OPTIONS") ||
