@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.example.noticebespring.repository.BookmarkRepository;
+import com.example.noticebespring.service.auth.UserService;
+
 
 
 @Service	
@@ -20,6 +23,9 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostPictureRepository postPictureRepository;
+    
+    private final BookmarkRepository bookmarkRepository;
+    private final UserService userService;
 
     /**
      * 게시글 상세 정보를 조회
@@ -32,9 +38,16 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
         
         
-        // 북마크 여부 초기는 false로 설정
+        // 북마크 여부 초기는 false로 설정, 사용자의 북마크 여부 확인
         boolean isBookmarked = false;
-
+        try {
+            Integer userId = userService.getAuthenticatedUser().getId();
+            isBookmarked =
+                bookmarkRepository.existsByBookmarkFolder_User_IdAndPostId(userId, postId);
+        } catch (CustomException ex) {
+            // 토큰 없거나 만료 시  북마크 false 로 간주하고 계속 진행
+        } 
+        
         
         Post previous = postRepository
                 .findFirstByIdLessThanOrderByIdDesc(postId)
