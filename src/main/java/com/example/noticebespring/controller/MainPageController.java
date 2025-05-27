@@ -30,8 +30,8 @@ public class MainPageController {
     }
 
     @Operation(
-            summary = "월간 인기 공지 조회",
-            description = "최근 30일 동안 '통합 공지'에서의 조회수 상위 7개 게시물 조회",
+            summary = "월간 인기 공지 조회 ",
+            description = "최근 30일 동안 '통합 공지'에서의 조회수 상위 7개 게시물 조회 ",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(
@@ -136,8 +136,8 @@ public class MainPageController {
     }
 
     @Operation(
-            summary = "모든 공지 조회",
-            description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회",
+            summary = "모든 공지 조회 ",
+            description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회 ",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(
