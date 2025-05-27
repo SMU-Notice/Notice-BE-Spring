@@ -72,11 +72,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info("User authenticated successfully. User ID: {}", userId);
             } else {
                 log.error("유효하지 않은 JWT 토큰 - URI: {}", request.getRequestURI());
-                throw new BadCredentialsException("유효하지 않은 JWT 토큰입니다. ");
+                throw new BadCredentialsException("유효하지 않은 JWT 토큰입니다.");
             }
         } catch (Exception e) {
             log.error("JWT 예외 발생 - URI: {}", request.getRequestURI(), e);
-            AuthenticationException authEx = new AuthenticationServiceException("JWT 인증 실패", e);
+            AuthenticationException authEx = new AuthenticationServiceException("JWT 인증 실패 ", e);
             jwtAuthenticationEntryPoint.commence(request, response, authEx);
             return;
         }
