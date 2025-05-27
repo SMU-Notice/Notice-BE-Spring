@@ -46,10 +46,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/", "/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**","/v3/api-docs", "/v3/api-docs/**", "/api-docs/**", "/api/test001").permitAll()
-                        .requestMatchers("/api/v1").permitAll()
+                        .requestMatchers("/api/v1", "/favicon.ico").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 );
@@ -61,7 +61,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
-        log.info("적용된 CORS Origins: {}", corsProperties.getAllowedOrigins());
+//        log.info("적용된 CORS Origins: {}", corsProperties.getAllowedOrigins());
         configuration.setAllowedMethods(corsProperties.getAllowedMethods());
         configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
         configuration.setExposedHeaders(corsProperties.getExposedHeaders());

@@ -1,88 +1,50 @@
 package com.example.noticebespring.service.auth.jwt;
 
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
-import java.security.SecureRandom;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 // JWT 토큰 발급 및 검증에 쓰일 키 생성기
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SecretKeyManager {
 
-    //HS512 해싱 알고리즘을 사용하기 위함
-    private static final int KEY_LENGTH_BYTES = 64;
-    //최대 2개의 이전 키 유지
-    private static final int MAX_PREVIOUS_KEYS = 2;
+    @Value("${jwt.secret}")
+    private String secretString;
 
     @Getter
-    private SecretKey currentKey;
-
-    @Getter
-    private final Queue<SecretKey> previousKeys = new LinkedList<>();
-    // 이전 키 관리
+    private SecretKey secretKey;
 
     @PostConstruct
-    public void init(){
-        byte[] keyBytes = new byte[KEY_LENGTH_BYTES];
-        //난수 생성기로 byte 배열을 랜덤 값으로 채움
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(keyBytes);
-        //HMAC 비밀 키로 변환
-        currentKey = Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    //@Scheduled: 지정된 주기마다 자동으로 실행 (7일)
-    @Scheduled(fixedRate = 604800000)
-    public void rotateKey(){
-        SecretKey oldKey = currentKey;
-        byte[] keyBytes = new byte[KEY_LENGTH_BYTES];
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(keyBytes);
-        currentKey = Keys.hmacShaKeyFor(keyBytes);
-        previousKeys.add(oldKey);
-
-        if (previousKeys.size() > MAX_PREVIOUS_KEYS){
-            previousKeys.poll();
+    public void init() {
+        if (secretString == null || secretString.length() < 64) {
+            throw new IllegalStateException("JWT 시크릿 키는 최소 64바이트(Base64 인코딩 기준)여야 합니다.");
         }
-        log.info("비밀 키가 교체되었습니다: " + new Date());
+
+        byte[] keyBytes = Base64.getDecoder().decode(secretString);
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+        log.debug("정적 JWT 비밀 키가 초기화되었습니다.");
     }
 
-    public boolean validateToken(String token, SecretKey key){
-        try{
-            Jwts.parser().
-                    verifyWith(key).
-                    build().
-                    parseSignedClaims(token)
-                    .getPayload();
+    public boolean validateToken(String token) {
+        try {
+            io.jsonwebtoken.Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("토큰 검증 실패", e.getMessage());
             return false;
         }
-    }
-
-    public boolean validateTokenWithRotation(String token){
-        if (validateToken(token, currentKey)){
-            return true;
-        }
-
-        for (SecretKey prekey : previousKeys){
-            if(validateToken(token, prekey)){
-                return true;
-            }
-        }
-        return false;
     }
 }
 

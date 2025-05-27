@@ -14,11 +14,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/main")
 @Tag(name = "메인 API", description = "메인 페이지 API (월간 인기 공지, 모든 공지)")
@@ -32,8 +30,8 @@ public class MainPageController {
     }
 
     @Operation(
-            summary = "월간 인기 공지 조회",
-            description = "최근 30일 동안 '통합 공지'에서의 조회수 상위 7개 게시물 조회",
+            summary = "월간 인기 공지 조회 ",
+            description = "최근 30일 동안 '통합 공지'에서의 조회수 상위 7개 게시물 조회 ",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(
@@ -130,17 +128,16 @@ public class MainPageController {
         try {
             List<TopViewDto> topViewDtoList = topViewService.getTop7PostsByBoardName("통합공지");
             return CommonResponse.ok(topViewDtoList);
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e){
             return CommonResponse.fail(ErrorCode.NOT_FOUND_POST);
         } catch (Exception e) {
             return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
-
     @Operation(
-            summary = "모든 공지 조회",
-            description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회",
+            summary = "모든 공지 조회 ",
+            description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회 ",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(

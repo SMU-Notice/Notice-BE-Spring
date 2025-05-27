@@ -36,13 +36,7 @@ public class BookmarkService {
         //북마크된 게시물이 없을 경우 그냥 비어있는 상태로 반환
         BookmarkedPostsDto posts = bookmarkRepository.findAllPostsById(userId, folderId);
 
-        if(posts == null){
-            EntityNotFoundException ex = new EntityNotFoundException("폴더를 찾을 수 없습니다");
-            log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId, ex);
-            throw ex;
-        }
-
-        log.debug("북마크된 게시물 조회 성공 - folder: {}, posts: {}", folderId, posts.posts().size());
+        log.info("북마크된 게시물 조회 성공 - folder: {}, posts: {}", folderId, posts.posts().size());
         return posts;
     }
 
@@ -51,27 +45,23 @@ public class BookmarkService {
     public Integer addBookmark(Integer userId, Integer folderId, Integer postId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_USER);
-                    log.warn("사용자를 찾을 수 없음 - userId: {}", userId, ex);
-                    return ex;
+                    log.warn("사용자를 찾을 수 없음 - userId: {}", userId);
+                    return new CustomException(ErrorCode.NOT_FOUND_USER);
                 });
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> {
-                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_POST);
-                    log.warn("게시물을 찾을 수 없음 - postId: {}", postId, ex);
-                    return ex;
+                    log.warn("게시물을 찾을 수 없음 - postId: {}", postId);
+                    return new CustomException(ErrorCode.NOT_FOUND_POST);
                 });
         BookmarkFolder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> {
-                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_FOLDER);
-                    log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId, ex);
-                    return ex;
+                    log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId);
+                    return new CustomException(ErrorCode.NOT_FOUND_FOLDER);
                 });
 
         if(bookmarkRepository.existsByBookmarkFolderIdAndPostId(folderId, postId)){
-            CustomException ex = new CustomException(ErrorCode.EXISTS_ALREADY_BOOKMARK);
-            log.warn("이미 북마크된 게시물 - userId: {}, folderId: {}, postId: {}", userId, folderId, postId, ex);
-            throw ex;
+            log.warn("이미 북마크된 게시물 - userId: {}, folderId: {}, postId: {}", userId, folderId, postId);
+            throw new CustomException(ErrorCode.EXISTS_ALREADY_BOOKMARK);
         }
 
         Bookmark bookmark = Bookmark.builder()
@@ -90,21 +80,18 @@ public class BookmarkService {
     public void removeBookmark(Integer userId, Integer folderId, Integer postId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_USER);
-                    log.warn("사용자를 찾을 수 없음 - userId: {}", userId, ex);
-                    return ex;
+                    log.warn("사용자를 찾을 수 없음 - userId: {}", userId);
+                    return new CustomException(ErrorCode.NOT_FOUND_USER);
                 });
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> {
-                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_POST);
-                    log.warn("게시물을 찾을 수 없음 - postId: {}", postId, ex);
-                    return ex;
+                    log.warn("게시물을 찾을 수 없음 - postId: {}", postId);
+                    return new CustomException(ErrorCode.NOT_FOUND_POST);
                 });
         BookmarkFolder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> {
-                    CustomException ex = new CustomException(ErrorCode.NOT_FOUND_FOLDER);
-                    log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId, ex);
-                    return ex;
+                    log.warn("폴더를 찾을 수 없음 - folderId: {}", folderId);
+                    return new CustomException(ErrorCode.NOT_FOUND_FOLDER);
                 });
 
         Bookmark bookmark = bookmarkRepository.findByBookmarkFolderIdAndPostId(folderId, postId)

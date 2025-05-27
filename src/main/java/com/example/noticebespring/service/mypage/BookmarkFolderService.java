@@ -38,9 +38,8 @@ public class BookmarkFolderService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         {
-                            IllegalArgumentException ex = new IllegalArgumentException("사용자가 존재하지 않습니다.");
-                            log.warn("사용자가 존재하지 않음 - userId: {}", userId, ex);
-                            return ex;
+                            log.warn("사용자가 존재하지 않음 - userId: {}", userId);
+                            return new IllegalArgumentException("사용자가 존재하지 않습니다.");
                         });
 
         String folderName = null;
@@ -82,8 +81,13 @@ public class BookmarkFolderService {
     // 북마크 폴더 목록 조회
     @Transactional(readOnly = true)
     public List<BookmarkFolderDto> getBookmarkFolders(Integer userId){
-        log.debug("북마크 폴더 목록 조회 - userId: {}", userId);
-        return bookmarkFolderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        log.debug("북마크 폴더 목록 조회 시작 - userId: {}", userId);
+
+        List<BookmarkFolderDto> folders = bookmarkFolderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        log.info("북마크 폴더 목록 조회 성공 - userId: {}, 폴더 수: {}", userId, folders.size());
+
+        return folders;
     }
 
     // 폴더 이름 변경
@@ -92,21 +96,18 @@ public class BookmarkFolderService {
         log.debug("폴더 이름 변경 - userId: {}, folderId: {}, newName: {}", userId, folderId, newName);
         BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
                 .orElseThrow(() -> {
-                    EntityNotFoundException ex = new EntityNotFoundException("북마크 폴더가 존재하지 않습니다.");
-                    log.warn("북마크 폴더가 존재하지 않음 - userId: {}", userId, ex);
-                    throw ex;
+                    log.warn("북마크 폴더가 존재하지 않음 - userId: {}", userId);
+                    return new EntityNotFoundException("북마크 폴더가 존재하지 않습니다.");
                 });
 
         if (!folder.getUser().getId().equals(userId)) {
-            AccessDeniedException ex = new AccessDeniedException("해당 폴더에 대한 권한이 없습니다.");
-            log.warn("권한 없음 - userId: {}, folderId: {}", userId, folderId, ex);
-            throw ex;
+            log.warn("권한 없음 - userId: {}, folderId: {}", userId, folderId);
+            throw new AccessDeniedException("해당 폴더에 대한 권한이 없습니다.");
         }
 
         if (bookmarkFolderRepository.existsByUserIdAndName(userId, newName)) {
-            CustomException ex = new CustomException(ErrorCode.EXISTS_ALREADY_FOLDER_NAME);
-            log.warn("폴더 이름 중복 - userId: {}, newName: {}", userId, newName, ex);
-            throw ex;
+            log.warn("폴더 이름 중복 - userId: {}, newName: {}", userId, newName);
+            throw new CustomException(ErrorCode.EXISTS_ALREADY_FOLDER_NAME);
         }
 
         folder.setName(newName);
@@ -121,15 +122,13 @@ public class BookmarkFolderService {
         log.debug("폴더 삭제 - userId: {}, folderId: {}", userId, folderId);
         BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
                 .orElseThrow(()-> {
-                    EntityNotFoundException ex = new EntityNotFoundException("북마크 폴더가 존재하지 않습니다.");
-                    log.warn("폴더 존재하지 않음 - folderId: {}", folderId, ex);
-                    return ex;
+                    log.warn("폴더 존재하지 않음 - folderId: {}", folderId);
+                    return new EntityNotFoundException("북마크 폴더가 존재하지 않습니다.");
                 });
 
         if(!folder.getUser().getId().equals(userId)){
-            AccessDeniedException ex = new AccessDeniedException("해당 폴더에 대한 권한이 없습니다.");
-            log.warn("권한 없음 - userId: {}, folderId: {}", userId, folderId, ex);
-            throw ex;
+            log.warn("권한 없음 - userId: {}, folderId: {}", userId, folderId);
+            throw new AccessDeniedException("해당 폴더에 대한 권한이 없습니다.");
         }
 
         bookmarkFolderRepository.delete(folder);
