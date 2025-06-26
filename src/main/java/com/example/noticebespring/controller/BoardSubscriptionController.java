@@ -5,7 +5,8 @@ import com.example.noticebespring.common.response.CommonResponse;
 import com.example.noticebespring.dto.boardSubscription.postNotification.PostNotificationRequestDto;
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionRequestDto;
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionResponseDto;
-import com.example.noticebespring.service.BoardSubscriptionService;
+import com.example.noticebespring.service.boardSubscription.BoardSubscriptionNotificationService;
+import com.example.noticebespring.service.boardSubscription.BoardSubscriptionManagementService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +26,8 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "게시판 구독 API", description = "게시판 구독 관련 API")
 public class BoardSubscriptionController {
 
-    private final BoardSubscriptionService boardSubscriptionService;
+    private final BoardSubscriptionManagementService boardSubscriptionManagementService;
+    private final BoardSubscriptionNotificationService boardSubscriptionNotificationService;
 
     @Operation(
             summary = "구독 목록 조회",
@@ -43,7 +45,7 @@ public class BoardSubscriptionController {
     })
     @GetMapping
     public CommonResponse<SubscriptionResponseDto> getSubscriptions() {
-        SubscriptionResponseDto response = boardSubscriptionService.getSubscriptions();
+        SubscriptionResponseDto response = boardSubscriptionManagementService.getSubscriptions();
         return CommonResponse.ok(response);
     }
 
@@ -82,7 +84,7 @@ public class BoardSubscriptionController {
     })
     @PostMapping
     public CommonResponse<SubscriptionResponseDto> manageSubscriptions(@RequestBody SubscriptionRequestDto subscriptionRequestDto) {
-        SubscriptionResponseDto response = boardSubscriptionService.manageSubscriptions(subscriptionRequestDto);
+        SubscriptionResponseDto response = boardSubscriptionManagementService.manageSubscriptions(subscriptionRequestDto);
         return CommonResponse.ok(response);
     }
 
@@ -113,14 +115,14 @@ public class BoardSubscriptionController {
     })
     @DeleteMapping
     public CommonResponse<String> cancelSubscription() {
-        String message = boardSubscriptionService.cancelAllSubscription();
+        String message = boardSubscriptionManagementService.cancelAllSubscription();
         return CommonResponse.ok(message);
     }
 
     @PostMapping("/new-posts")
     public CommonResponse<String> notifyNewPosts(@RequestBody PostNotificationRequestDto requestDto) throws JsonProcessingException {
         // 예: post_types = {"공지": [123, 456], "질문": [789]}
-        boardSubscriptionService.sendNewPostNotification(requestDto);
+        boardSubscriptionNotificationService.sendNewPostNotification(requestDto);
 
         // 여기에 이메일 발송 로직 연동하면 됨
         return CommonResponse.ok("이메일 전송 요청을 받았습니다.");

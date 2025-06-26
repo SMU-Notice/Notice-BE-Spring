@@ -1,47 +1,31 @@
-package com.example.noticebespring.service;
+package com.example.noticebespring.service.boardSubscription;
 
-import com.example.noticebespring.common.helper.RedisCacheHelper;
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
-import com.example.noticebespring.common.util.RedisKeyUtil;
-import com.example.noticebespring.dto.boardSubscription.postNotification.PostNotificationRequestDto;
-import com.example.noticebespring.dto.boardSubscription.postNotification.PostSummaryDto;
-import com.example.noticebespring.dto.boardSubscription.postNotification.UserSubscriptionInfoDto;
-import com.example.noticebespring.dto.boardSubscription.postNotification.UserSubscriptionInfoGroupDto;
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionRequestDto;
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionResponseDto;
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionItemDto;
 
-import com.example.noticebespring.entity.Board;
 import com.example.noticebespring.entity.BoardSubscription;
 import com.example.noticebespring.entity.BoardSubscriptionId;
 import com.example.noticebespring.entity.User;
-import com.example.noticebespring.repository.BoardRepository;
 import com.example.noticebespring.repository.BoardSubscriptionRepository;
-import com.example.noticebespring.repository.PostRepository;
 import com.example.noticebespring.service.auth.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class BoardSubscriptionService {
+public class BoardSubscriptionManagementService {
 
-    private final BoardSubscriptionRepository boardSubscriptionRepository;
-    private final PostRepository postRepository;
-    private final BoardRepository boardRepository;
     private final UserService userService;
-    private final RabbitMqService rabbitMqService;
-    private final RedisCacheHelper redisCacheHelper;
+    private final BoardSubscriptionRepository boardSubscriptionRepository;
 
     public SubscriptionResponseDto getSubscriptions() {
         // 인증된 사용자 가져오기 (인증된 사용자 정보를 가져오는 메서드가 있다고 가정)
@@ -197,84 +181,6 @@ public class BoardSubscriptionService {
         boardSubscriptionRepository.deleteAll(subscriptions);
 
         return "구독이 모두 취소되었습니다.";
-
-    }
-
-
-    public void sendNewPostNotification(PostNotificationRequestDto requestDto)  {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-
-        // 게시판 조회
-        Board board = boardRepository.findById(requestDto.boardId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_BOARD));
-
-
-        // 게시물 조회
-        List<PostSummaryDto> posts = postRepository.findPostSummariesByPostIds(requestDto.getAllPostIds());
-
-        // 요청한 postId 중 누락된 ID가 있는지 확인
-        if (posts.size() != requestDto.getAllPostIds().size()) {
-            throw new CustomException(ErrorCode.INVALID_POST_ID_REQUEST);
-        }
-
-
-        // 구독한 사용자 조회
-        List<UserSubscriptionInfoDto> userSubscriptionInfos = boardSubscriptionRepository.findUserSubscriptionInfoByBoardIdAndPostTypes(requestDto.boardId(), requestDto.getPostTypeNames());
-
-        // 구독자가 없는 경우 메서드 종료
-        if (userSubscriptionInfos.isEmpty()) {
-            return;
-        }
-
-
-        // userId 기준으로 구독 정보를 유저 기준으로 그룹화 + timestamp 포함
-        List<UserSubscriptionInfoGroupDto> groupedResult = userSubscriptionInfos.stream()
-                .collect(Collectors.groupingBy(
-                        UserSubscriptionInfoDto::userId,
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> {
-                                    UserSubscriptionInfoDto first = list.get(0);
-                                    Map<String, List<Integer>> postTypes = list.stream()
-                                            .map(UserSubscriptionInfoDto::postType)
-                                            .distinct()
-                                            .collect(Collectors.toMap(
-                                                    postType -> postType,
-                                                    requestDto::getPostIdsByPostType
-                                            ));
-
-                                    return new UserSubscriptionInfoGroupDto(
-                                            first.userId(),
-                                            first.email(),
-                                            first.boardId(),
-                                            board.getName(),
-                                            postTypes,
-                                            timestamp // 이 부분은 그대로
-                                    );
-                                }
-                        )
-                ))
-                .values()
-                .stream()
-                .toList();
-
-        // Redis에 게시물 정보 저장
-
-        for (PostSummaryDto post : posts) {
-            // redis에 저장할 데이터 key 설정
-            String key = RedisKeyUtil.generatePostKey(timestamp, post.boardId(), post.postId());
-
-            // redis에 post 캐시
-            redisCacheHelper.cachePost(key, post, 3600L);
-
-        }
-
-
-        // rabbitMQ producer 요청
-        for (UserSubscriptionInfoGroupDto dto : groupedResult) {
-            rabbitMqService.sendEmailMessage(dto);
-        }
-
 
     }
 
