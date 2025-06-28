@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class RabbitMqController {
     private final RabbitMqService rabbitMqService;
 
-    @PostMapping("/send/message")
+    @PostMapping("/send/test-message")
     public ResponseEntity<String> sendMessage (@RequestBody TestMessageDto messageDto
     ) {
         this.rabbitMqService.sendTestMessage(messageDto);

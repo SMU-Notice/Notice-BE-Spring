@@ -5,6 +5,7 @@
 src/main/java/com/example/noticebespring
 │── common
 │   ├── config        # 프로젝트 전역 설정 (예: Security, CORS, JWT 등)
+│   ├── filter        # 요청 필터링 및 인증 처리
 │   ├── response      # 공통 응답 객체 및 예외 처리
 │   ├── util          # 유틸리티 클래스 (날짜 변환, 문자열 처리, Redis 등)
 │── controller        # REST API 엔드포인트 관리
