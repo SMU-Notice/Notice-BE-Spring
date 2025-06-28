@@ -94,8 +94,8 @@ public class RabbitMqService {
     /**
      * 1. Queue 에서 메세지를 구독
      **/
-    @RabbitListener(queues = "${rabbitmq.queue.email}", concurrency = "3-7")
-    public void receiveTestMessage(UserSubscriptionInfoGroupDto userSubscriptionInfoGroupDto, Message message) {
+    @RabbitListener(queues = "${rabbitmq.queue.email}", concurrency = "3-5")
+    public void receiveUserSubscriptionInfoMessage(UserSubscriptionInfoGroupDto userSubscriptionInfoGroupDto, Message message) {
         log.info("Received Message : {}",userSubscriptionInfoGroupDto.toString());
 
         // 재전송 개수 설정
