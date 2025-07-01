@@ -133,13 +133,14 @@ public class RabbitMqService {
                 postSummaries
         );
 
+        log.info("Sending email to: {}", emailDto.email());
         // 이메일 전송
         try {
+            log.info("Sending email to: {}", emailDto.email());
             emailService.sendNewPostNotificationEmail(emailDto);
         } catch (MessagingException e) {
             if (retryCount >= 3) {
                 log.error("메일 전송 3회 이상 실패 - 중단: {}", emailDto.email(), e);
-                // 여기서 DB 저장 또는 알림 로직 추가 가능
             } else {
                 // retryCount 증가시키고 DLQ로 보내기 (TTL 이후 재투입됨)
                 this.sendRetryEmailMessage(userSubscriptionInfoGroupDto, retryCount);

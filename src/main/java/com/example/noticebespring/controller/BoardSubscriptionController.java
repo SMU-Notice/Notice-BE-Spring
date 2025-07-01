@@ -7,7 +7,6 @@ import com.example.noticebespring.dto.boardSubscription.register.SubscriptionReq
 import com.example.noticebespring.dto.boardSubscription.register.SubscriptionResponseDto;
 import com.example.noticebespring.service.boardSubscription.BoardSubscriptionNotificationService;
 import com.example.noticebespring.service.boardSubscription.BoardSubscriptionManagementService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -119,12 +118,116 @@ public class BoardSubscriptionController {
         return CommonResponse.ok(message);
     }
 
+    @Operation(
+            summary = "새 게시물 등록 알림 발송",
+            description = "새로 등록된 게시물에 대해 구독자들에게 이메일 알림을 발송합니다. " +
+                    "게시물 타입별로 구독한 사용자들에게만 해당 게시물 정보가 포함된 이메일이 전송됩니다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "이메일 알림 발송 요청 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CommonResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": true,
+                                  "data": "이메일 전송 요청을 받았습니다.",
+                                  "error": null
+                                }
+                                """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "요청한 게시물 중 일부가 존재하지 않음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CommonResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": false,
+                                  "data": null,
+                                  "error": {
+                                    "code": 400010,
+                                    "message": "요청한 게시물 중 일부가 존재하지 않습니다."
+                                  }
+                                }
+                                """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "게시판을 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CommonResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": false,
+                                  "data": null,
+                                  "error": {
+                                    "code": 40409,
+                                    "message": "게시판을 찾을 수 없습니다."
+                                  }
+                                }
+                                """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Redis 캐시 처리 실패",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CommonResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": false,
+                                  "data": null,
+                                  "error": {
+                                    "code": 50005,
+                                    "message": "Redis 캐시 처리에 실패했습니다."
+                                  }
+                                }
+                                """
+                            )
+                    )
+            )
+    })
     @PostMapping("/new-posts")
-    public CommonResponse<String> notifyNewPosts(@RequestBody PostNotificationRequestDto requestDto) throws JsonProcessingException {
-        // 예: post_types = {"공지": [123, 456], "질문": [789]}
+    public CommonResponse<String> notifyNewPosts(
+            @RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "새 게시물 알림 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PostNotificationRequestDto.class),
+                            examples = @ExampleObject(
+                                    name = "새 게시물 알림 요청 예시",
+                                    value = """
+                                {
+                                  "boardId": 1,
+                                  "postTypes": {
+                                    "학사": [1, 2, 3],
+                                    "일반": [4, 5],
+                                    "공지사항": [6]
+                                  }
+                                }
+                                """
+                            )
+                    )
+            )
+            PostNotificationRequestDto requestDto) {
         boardSubscriptionNotificationService.sendNewPostNotification(requestDto);
-
-        // 여기에 이메일 발송 로직 연동하면 됨
         return CommonResponse.ok("이메일 전송 요청을 받았습니다.");
     }
 }

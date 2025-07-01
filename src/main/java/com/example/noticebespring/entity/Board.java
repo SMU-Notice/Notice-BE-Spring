@@ -22,6 +22,7 @@ public class Board {
     private Integer id;
 
     @Column(name = "campus", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Campus campus;
 
     @Column(name = "site", nullable = false)

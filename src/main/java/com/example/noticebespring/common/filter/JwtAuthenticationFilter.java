@@ -108,9 +108,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         path.startsWith("/v3/api-docs") ||
                         path.startsWith("/api-docs") ||
                         path.startsWith("/api/auth/login/") ||
+                        path.startsWith("/api/rabbit-mq") ||
                         path.startsWith("/api/test001") ||
                         path.equals("/api/auth/sneaky/login") ||
                         path.equals("/api/auth/sneaky/register") ||
+                        path.equals("/api/board-subscription/new-posts") ||
                         // 외부 봇 탐지용 요청 무시
                         path.endsWith(".aspx") ||
                         path.startsWith("/Core/Skin/") ;
