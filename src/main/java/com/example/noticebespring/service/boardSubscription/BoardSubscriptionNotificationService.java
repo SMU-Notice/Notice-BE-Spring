@@ -45,8 +45,18 @@ public class BoardSubscriptionNotificationService {
      */
     public void sendNewPostNotification(PostNotificationRequestDto requestDto) {
         long startTime = System.currentTimeMillis();
-        log.info("새 게시물 알림 발송 시작 - boardId: {}, postTypes: {}, 총 게시물 수: {}",
-                requestDto.boardId(), requestDto.getPostTypeNames(), requestDto.getAllPostIds().size());
+
+        String postTypeDetails = requestDto.postTypes().entrySet().stream()
+                .map(entry -> String.format("%s(%d개): %s",
+                        entry.getKey(),
+                        entry.getValue().size(),
+                        entry.getValue().toString()))
+                .collect(Collectors.joining(", "));
+
+        log.info("새 게시물 알림 발송 시작 - boardId: {}, postTypes: [{}], 총 게시물 수: {}",
+                requestDto.boardId(),
+                postTypeDetails,
+                requestDto.getAllPostIds().size());
 
         // 1. 알림 생성 시간 설정 (Redis 키와 알림 메시지에 사용)
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
