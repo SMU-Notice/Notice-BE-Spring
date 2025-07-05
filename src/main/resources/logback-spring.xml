@@ -17,10 +17,10 @@
         <!-- INFO 로그 파일 설정 -->
         <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <!-- 초기 파일 이름을 info-날짜 형식으로 설정 -->
-            <file>/logs/springboot/info-%d{yyyy-MM-dd}.log</file> <!-- 초기 파일 이름에 날짜 포함 -->
+            <file>/logs/spring-boot/info-%d{yyyy-MM-dd}.log</file> <!-- 초기 파일 이름에 날짜 포함 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 롤링된 파일 이름 패턴을 info-%d{yyyy-MM-dd}.log 형식으로 설정 -->
-                <fileNamePattern>/logs/springboot/info-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <fileNamePattern>/logs/spring-boot/info-%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>30</maxHistory> <!-- 최대 보관 기간 -->
             </rollingPolicy>
             <encoder>
@@ -36,10 +36,10 @@
         <!-- WARN 로그 파일 설정 -->
         <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <!-- 초기 파일 이름을 warn-날짜 형식으로 설정 -->
-            <file>/logs/springboot/warn-%d{yyyy-MM-dd}.log</file> <!-- 초기 파일 이름에 날짜 포함 -->
+            <file>/logs/spring-boot/warn-%d{yyyy-MM-dd}.log</file> <!-- 초기 파일 이름에 날짜 포함 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 롤링된 파일 이름 패턴을 warn-%d{yyyy-MM-dd}.log 형식으로 설정 -->
-                <fileNamePattern>/logs/springboot/warn-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <fileNamePattern>/logs/spring-boot/warn-%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>30</maxHistory> <!-- 최대 보관 기간 -->
             </rollingPolicy>
             <encoder>
@@ -55,10 +55,10 @@
         <!-- ERROR 로그 파일 설정 -->
         <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <!-- 초기 파일 이름을 error-날짜 형식으로 설정 -->
-            <file>/logs/springboot/error-%d{yyyy-MM-dd}.log</file> <!-- 초기 파일 이름에 날짜 포함 -->
+            <file>/logs/spring-boot/error-%d{yyyy-MM-dd}.log</file> <!-- 초기 파일 이름에 날짜 포함 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 롤링된 파일 이름 패턴을 error-%d{yyyy-MM-dd}.log 형식으로 설정 -->
-                <fileNamePattern>/logs/springboot/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <fileNamePattern>/logs/spring-boot/error-%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>30</maxHistory> <!-- 최대 보관 기간 -->
             </rollingPolicy>
             <encoder>
