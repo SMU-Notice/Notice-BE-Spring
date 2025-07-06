@@ -1,5 +1,6 @@
 package com.example.noticebespring.service;
 
+import com.example.noticebespring.common.config.rabiitMQ.RabbitMqProperties;
 import com.example.noticebespring.common.helper.RedisCacheHelper;
 import com.example.noticebespring.common.util.RedisKeyUtil;
 import com.example.noticebespring.dto.boardSubscription.postNotification.PostSummaryDto;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.mail.MessagingException;
 import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.core.Message;
@@ -31,28 +31,8 @@ import java.util.Map;
 @Service
 public class RabbitMqService {
 
-
-    @Value("${rabbitmq.queue.test}")
-    private String testQueueName;
-
-    @Value("${rabbitmq.queue.email}")
-    private String emailQueueName;
-
-    @Value("${rabbitmq.queue.email-retry}")
-    private String emailRetryQueueName;
-
-    @Value("${rabbitmq.exchange.name}")
-    private String emailExchangeName;
-
-    @Value("${rabbitmq.routing.key.test}")
-    private String testRoutingKey;
-
-    @Value("${rabbitmq.routing.key.email}")
-    private String emailRoutingKey;
-
-    @Value("${rabbitmq.routing.key.email-retry}")
-    private String emailRetryRoutingKey;
-
+    // @Value 어노테이션들 모두 제거하고 Properties 사용
+    private final RabbitMqProperties rabbitMqProperties;
     private final RabbitTemplate rabbitTemplate;
     private final RedisCacheHelper redisCacheHelper;
     private final EmailService emailService;
@@ -63,12 +43,20 @@ public class RabbitMqService {
      **/
     public void sendTestMessage(TestMessageDto messageDto) {
         log.info("messagge send: {}",messageDto.toString());
-        this.rabbitTemplate.convertAndSend(emailExchangeName, testRoutingKey, messageDto);
+        this.rabbitTemplate.convertAndSend(
+                rabbitMqProperties.getExchange().getName(),
+                rabbitMqProperties.getRouting().getKey().getTest(),
+                messageDto
+        );
     }
 
     public void sendEmailMessage(UserSubscriptionInfoGroupDto userSubscriptionInfoGroupDto) {
         log.info("messagge send: {}",userSubscriptionInfoGroupDto.toString());
-        this.rabbitTemplate.convertAndSend(emailExchangeName, emailRoutingKey, userSubscriptionInfoGroupDto);
+        this.rabbitTemplate.convertAndSend(
+                rabbitMqProperties.getExchange().getName(),
+                rabbitMqProperties.getRouting().getKey().getEmail(),
+                userSubscriptionInfoGroupDto
+        );
     }
 
     // 재시도 전송
@@ -80,13 +68,18 @@ public class RabbitMqService {
             return msg;
         };
 
-        rabbitTemplate.convertAndSend(emailExchangeName, emailRetryRoutingKey, userSubscriptionInfoGroupDto, processor);
+        rabbitTemplate.convertAndSend(
+                rabbitMqProperties.getExchange().getName(),
+                rabbitMqProperties.getRouting().getKey().getEmailRetry(),
+                userSubscriptionInfoGroupDto,
+                processor
+        );
     }
 
     /**
      * 1. Queue 에서 메세지를 구독
      **/
-    @RabbitListener(queues = "${rabbitmq.queue.test}")
+    @RabbitListener(queues = "${app.rabbitmq.queue.test}")
     public void receiveTestMessage(TestMessageDto messageDto) {
         log.info("Received Message : {}",messageDto.toString());
     }
@@ -94,7 +87,7 @@ public class RabbitMqService {
     /**
      * 1. Queue 에서 메세지를 구독
      **/
-    @RabbitListener(queues = "${rabbitmq.queue.email}", concurrency = "3-5")
+    @RabbitListener(queues = "${app.rabbitmq.queue.email}", concurrency = "3-5")
     public void receiveUserSubscriptionInfoMessage(UserSubscriptionInfoGroupDto userSubscriptionInfoGroupDto, Message message) {
         log.info("Received Message : {}",userSubscriptionInfoGroupDto.toString());
 
@@ -102,7 +95,6 @@ public class RabbitMqService {
         Integer retryCount = (Integer) message.getMessageProperties()
                 .getHeaders()
                 .getOrDefault("retryCount", 0);
-
 
         // 메일을 실을 내용을 담을꺼 생성
         List<PostSummaryDto> postSummaries = new ArrayList<>();
@@ -119,13 +111,9 @@ public class RabbitMqService {
                 );
 
                 PostSummaryDto postSummaryDto = redisCacheHelper.getPost(key);
-
                 postSummaries.add(postSummaryDto);
-
-
             }
         }
-
 
         EmailPostContentDto emailDto = new EmailPostContentDto(
                 userSubscriptionInfoGroupDto.email(),
@@ -146,7 +134,5 @@ public class RabbitMqService {
                 this.sendRetryEmailMessage(userSubscriptionInfoGroupDto, retryCount);
             }
         }
-
-
     }
 }

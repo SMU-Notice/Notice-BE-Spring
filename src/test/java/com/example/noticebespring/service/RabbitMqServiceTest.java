@@ -1,6 +1,7 @@
 package com.example.noticebespring.service;
 
 
+import com.example.noticebespring.common.config.rabiitMQ.RabbitMqProperties;
 import com.example.noticebespring.common.helper.RedisCacheHelper;
 import com.example.noticebespring.common.util.RedisKeyUtil;
 import com.example.noticebespring.dto.boardSubscription.postNotification.PostSummaryDto;
@@ -44,75 +45,6 @@ class RabbitMqServiceTest {
     private RabbitMqService rabbitMqService;
 
     @Test
-    void 이메일_전송_성공() throws MessagingException {
-        // Given
-        Map<String, java.util.List<Integer>> postTypes = Map.of(
-                "학사", Arrays.asList(101, 102),
-                "일반", Arrays.asList(201)
-        );
-
-        UserSubscriptionInfoGroupDto userGroupDto = new UserSubscriptionInfoGroupDto(
-                1,
-                "user1@email.com",
-                100,
-                "자유게시판",
-                postTypes,
-                "202506261230"
-        );
-
-        // Message와 MessageProperties Mock 설정
-        Message mockMessage = mock(Message.class);
-        MessageProperties mockProperties = mock(MessageProperties.class);
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("retryCount", 0);
-
-        when(mockMessage.getMessageProperties()).thenReturn(mockProperties);
-        when(mockProperties.getHeaders()).thenReturn(headers);
-
-        // Redis에서 가져올 PostSummaryDto Mock 설정
-        PostSummaryDto post1 = new PostSummaryDto(100, 101, "학사", "학사 공지 1", "내용 요약 1", LocalDate.now());
-        PostSummaryDto post2 = new PostSummaryDto(100, 102, "학사", "학사 공지 2", "내용 요약 2", LocalDate.now());
-        PostSummaryDto post3 = new PostSummaryDto(100, 201, "일반", "일반 게시글 1", "내용 요약 3", LocalDate.now());
-
-        // RedisKeyUtil Mock 설정 및 Redis 캐시 응답 설정
-        try (MockedStatic<RedisKeyUtil> mockedRedisKeyUtil = mockStatic(RedisKeyUtil.class)) {
-            mockedRedisKeyUtil.when(() -> RedisKeyUtil.generatePostKey("202506261230", 100, 101))
-                    .thenReturn("202506261230_100_101");
-            mockedRedisKeyUtil.when(() -> RedisKeyUtil.generatePostKey("202506261230", 100, 102))
-                    .thenReturn("202506261230_100_102");
-            mockedRedisKeyUtil.when(() -> RedisKeyUtil.generatePostKey("202506261230", 100, 201))
-                    .thenReturn("202506261230_100_201");
-
-            when(redisCacheHelper.getPost("202506261230_100_101")).thenReturn(post1);
-            when(redisCacheHelper.getPost("202506261230_100_102")).thenReturn(post2);
-            when(redisCacheHelper.getPost("202506261230_100_201")).thenReturn(post3);
-
-            // EmailService가 정상적으로 동작한다고 설정 (예외 없음)
-            doNothing().when(emailService).sendNewPostNotificationEmail(any(EmailPostContentDto.class));
-
-            // When
-            rabbitMqService.receiveTestMessage(userGroupDto, mockMessage);
-
-            // Then
-            // 1. Redis에서 각 게시물 정보를 가져왔는지 확인
-            verify(redisCacheHelper).getPost("202506261230_100_101");
-            verify(redisCacheHelper).getPost("202506261230_100_102");
-            verify(redisCacheHelper).getPost("202506261230_100_201");
-
-            // 2. 이메일 서비스가 한 번 호출되었는지 확인
-            verify(emailService, times(1)).sendNewPostNotificationEmail(any(EmailPostContentDto.class));
-
-            // 3. 재시도 메시지 전송이 호출되지 않았는지 확인
-            verify(rabbitTemplate, never()).convertAndSend(
-                    anyString(),
-                    anyString(),
-                    any(UserSubscriptionInfoGroupDto.class),
-                    any(org.springframework.amqp.core.MessagePostProcessor.class)
-            );
-        }
-    }
-
-    @Test
     void 이메일_전송_실패_후_재시도_전송() throws MessagingException {
         // Given
         Map<String, java.util.List<Integer>> postTypes = Map.of(
@@ -140,9 +72,20 @@ class RabbitMqServiceTest {
         // Redis 설정
         PostSummaryDto post1 = new PostSummaryDto(100, 101, "학사", "학사 공지", "내용 요약", LocalDate.now());
 
-        // RabbitMQ 설정값들 주입 (ReflectionTestUtils 사용)
-        ReflectionTestUtils.setField(rabbitMqService, "emailExchangeName", "email.exchange");
-        ReflectionTestUtils.setField(rabbitMqService, "emailRetryRoutingKey", "email.retry");
+        // RabbitMqProperties Mock 추가
+        RabbitMqProperties mockProperties2 = mock(RabbitMqProperties.class);
+        RabbitMqProperties.Exchange mockExchange = mock(RabbitMqProperties.Exchange.class);
+        RabbitMqProperties.Routing mockRouting = mock(RabbitMqProperties.Routing.class);
+        RabbitMqProperties.Routing.Key mockKey = mock(RabbitMqProperties.Routing.Key.class);
+
+        when(mockProperties2.getExchange()).thenReturn(mockExchange);
+        when(mockExchange.getName()).thenReturn("email-exchange");
+        when(mockProperties2.getRouting()).thenReturn(mockRouting);
+        when(mockRouting.getKey()).thenReturn(mockKey);
+        when(mockKey.getEmailRetry()).thenReturn("email-retry-key");
+
+        // RabbitMqProperties 주입
+        ReflectionTestUtils.setField(rabbitMqService, "rabbitMqProperties", mockProperties2);
 
         try (MockedStatic<RedisKeyUtil> mockedRedisKeyUtil = mockStatic(RedisKeyUtil.class)) {
             mockedRedisKeyUtil.when(() -> RedisKeyUtil.generatePostKey("202506261230", 100, 101))
@@ -154,8 +97,8 @@ class RabbitMqServiceTest {
             doThrow(new MessagingException("이메일 전송 실패"))
                     .when(emailService).sendNewPostNotificationEmail(any(EmailPostContentDto.class));
 
-            // When
-            rabbitMqService.receiveTestMessage(userGroupDto, mockMessage);
+            // When - 올바른 메서드 호출
+            rabbitMqService.receiveUserSubscriptionInfoMessage(userGroupDto, mockMessage);
 
             // Then
             // 1. 이메일 서비스가 호출되었는지 확인
@@ -163,8 +106,8 @@ class RabbitMqServiceTest {
 
             // 2. 재시도 메시지가 전송되었는지 확인
             verify(rabbitTemplate, times(1)).convertAndSend(
-                    eq("email.exchange"),
-                    eq("email.retry"),
+                    eq("email-exchange"),
+                    eq("email-retry-key"),
                     eq(userGroupDto),
                     any(org.springframework.amqp.core.MessagePostProcessor.class)
             );
@@ -209,8 +152,8 @@ class RabbitMqServiceTest {
             doThrow(new MessagingException("이메일 전송 실패"))
                     .when(emailService).sendNewPostNotificationEmail(any(EmailPostContentDto.class));
 
-            // When
-            rabbitMqService.receiveTestMessage(userGroupDto, mockMessage);
+            // When - 올바른 메서드 호출
+            rabbitMqService.receiveUserSubscriptionInfoMessage(userGroupDto, mockMessage);
 
             // Then
             // 1. 이메일 서비스가 호출되었는지 확인

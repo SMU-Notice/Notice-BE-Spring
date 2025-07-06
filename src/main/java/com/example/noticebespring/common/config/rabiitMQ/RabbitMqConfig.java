@@ -9,7 +9,6 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
 
 @RequiredArgsConstructor
 @Configuration
@@ -17,45 +16,24 @@ public class RabbitMqConfig {
 
     private final RabbitMqProperties rabbitMqProperties;
 
-    @Value("${rabbitmq.queue.test}")
-    private String testQueueName;
-
-    @Value("${rabbitmq.queue.email}")
-    private String emailQueueName;
-
-    @Value("${rabbitmq.queue.email-retry}")
-    private String emailRetryQueueName;
-
-    @Value("${rabbitmq.exchange.name}")
-    private String emailExchangeName;
-
-    @Value("${rabbitmq.routing.key.test}")
-    private String testRoutingKey;
-
-    @Value("${rabbitmq.routing.key.email}")
-    private String emailRoutingKey;
-
-    @Value("${rabbitmq.routing.key.email-retry}")
-    private String emailRetryRoutingKey;
-
     // org.springframework.amqp.core.Queue
     // 각각의 큐 등록
     @Bean
     public Queue testQueue() {
-        return new Queue(testQueueName);
+        return new Queue(rabbitMqProperties.getQueue().getTest());
     }
 
     @Bean
     public Queue emailQueue() {
-        return new Queue(emailQueueName);
+        return new Queue(rabbitMqProperties.getQueue().getEmail());
     }
 
     @Bean
     public Queue emailRetryQueue() {
-        return QueueBuilder.durable(emailRetryQueueName)
+        return QueueBuilder.durable(rabbitMqProperties.getQueue().getEmailRetry())
                 .withArgument("x-message-ttl", 30000) // 30초 대기
-                .withArgument("x-dead-letter-exchange", emailExchangeName) // 원래 메일 처리 큐로
-                .withArgument("x-dead-letter-routing-key", emailRoutingKey)
+                .withArgument("x-dead-letter-exchange", rabbitMqProperties.getExchange().getName()) // 원래 메일 처리 큐로
+                .withArgument("x-dead-letter-routing-key", rabbitMqProperties.getRouting().getKey().getEmail())
                 .build();
     }
 
@@ -64,7 +42,7 @@ public class RabbitMqConfig {
      */
     @Bean
     public DirectExchange directExchange() {
-        return new DirectExchange(emailExchangeName);
+        return new DirectExchange(rabbitMqProperties.getExchange().getName());
     }
 
     /**
@@ -73,17 +51,17 @@ public class RabbitMqConfig {
     // 각 큐를 Exchange에 바인딩 (Routing Key 별로)
     @Bean
     public Binding testBinding() {
-        return BindingBuilder.bind(testQueue()).to(directExchange()).with(testRoutingKey);
+        return BindingBuilder.bind(testQueue()).to(directExchange()).with(rabbitMqProperties.getRouting().getKey().getTest());
     }
 
     @Bean
     public Binding emailBinding() {
-        return BindingBuilder.bind(emailQueue()).to(directExchange()).with(emailRoutingKey);
+        return BindingBuilder.bind(emailQueue()).to(directExchange()).with(rabbitMqProperties.getRouting().getKey().getEmail());
     }
 
     @Bean
     public Binding emailRetryBinding() {
-        return BindingBuilder.bind(emailRetryQueue()).to(directExchange()).with(emailRetryRoutingKey);
+        return BindingBuilder.bind(emailRetryQueue()).to(directExchange()).with(rabbitMqProperties.getRouting().getKey().getEmailRetry());
     }
 
     /**
