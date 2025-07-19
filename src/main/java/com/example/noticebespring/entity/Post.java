@@ -24,7 +24,7 @@ public class Post {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(name = "original_post_id", nullable = false)
+    @Column(name = "original_post_id", nullable = false, unique = true)
     private Integer originalPostId;
 
     @Column(name = "type",length = 30, nullable = false)
@@ -34,7 +34,7 @@ public class Post {
     private String title;
 
     @Lob
-    @Column(name = "content_summary", nullable = false)
+    @Column(name = "content_summary", nullable = false, columnDefinition = "TEXT")
     private String contentSummary;
 
     @Column(name = "view_count", nullable = false)
