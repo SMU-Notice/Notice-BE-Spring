@@ -23,7 +23,6 @@ public class PostPicture {
     @Column(columnDefinition = "TEXT", nullable = false) //사진 URL
     private String url;
 
-    @Lob
-    @Column(name = "picture_summary") //사진 요약
+    @Column(name = "picture_summary", columnDefinition = "TEXT") //사진 요약
     private String pictureSummary;
 }
