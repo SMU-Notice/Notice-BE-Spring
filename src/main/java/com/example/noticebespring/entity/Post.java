@@ -33,8 +33,7 @@ public class Post {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Lob
-    @Column(name = "content_summary", nullable = false)
+    @Column(name = "content_summary", nullable = false, columnDefinition = "TEXT")
     private String contentSummary;
 
     @Column(name = "view_count", nullable = false)
