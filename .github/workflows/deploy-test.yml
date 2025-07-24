@@ -44,7 +44,7 @@ jobs:
       # 6. Docker 이미지 빌드
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-app:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-app:test .
 
       # 7. DockerHub 로그인
       - name: Log in to DockerHub
@@ -56,7 +56,7 @@ jobs:
       # 8. Docker 이미지를 Docker Hub에 푸시
       - name: Push Docker image to DockerHub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/spring-app:test
 
       # 9. EC2에 SSH 접속하여 Docker Compose로 배포
       - name: SSH to EC2 and deploy with Docker Compose
@@ -79,7 +79,7 @@ jobs:
             docker-compose rm -f spring-app
             
             # 9-4. 최신 이미지 pull
-            echo "📥 Pulling latest spring-app image"
+            echo "📥 Pulling test spring-app image"
             docker-compose pull spring-app
             
             # 9-5. 새 컨테이너로 실행
