@@ -20,6 +20,7 @@ public enum ErrorCode {
     INVALID_DATE_RANGE(40007, HttpStatus.BAD_REQUEST, "날짜 구간이 유효하지 않습니다."),
     INVALID_COLLEGE_NAME(40008, HttpStatus.BAD_REQUEST, "단과대학 이름이 유효하지 않습니다."),
     INVALID_DEPARTMENT_NAME(40009, HttpStatus.BAD_REQUEST, "학과 이름이 유효하지 않습니다."),
+    INVALID_POST_ID_REQUEST(400010, HttpStatus.BAD_REQUEST, "요청한 게시물 중 일부가 존재하지 않습니다."),
 
     //401 Unauthorized
     UNAUTHORIZED(40101,HttpStatus.UNAUTHORIZED, "인증에 실패하였습니다. 재로그인 하세요."),
@@ -40,6 +41,7 @@ public enum ErrorCode {
     NOT_FOUND_BOOKMARK(40406, HttpStatus.NOT_FOUND, "북마크를 찾을 수 없습니다."),
     NOT_FOUND_COLLEGE(40407, HttpStatus.NOT_FOUND,"단과대학 이름을 찾을 수 없습니다."),
     NOT_FOUND_DEPARTMENT(40408, HttpStatus.NOT_FOUND,"학과 이름을 찾을 수 없습니다."),
+    NOT_FOUND_BOARD(40409, HttpStatus.NOT_FOUND, "게시판을 찾을 수 없습니다."),
 
     // 409 Conflict
     EXISTS_ALREADY_FOLDER_NAME(40901, HttpStatus.CONFLICT, "동일한 이름의 폴더가 이미 존재합니다."),
@@ -51,7 +53,8 @@ public enum ErrorCode {
     JWT_GENERATION_FAILED(50001, HttpStatus.INTERNAL_SERVER_ERROR, "JWT 발급에 실패했습니다."),
     POST_RETRIEVAL_ERROR(50002, HttpStatus.INTERNAL_SERVER_ERROR, "게시물 조회에 실패했습니다."),
     DATE_PARSING_ERROR(50003, HttpStatus.INTERNAL_SERVER_ERROR, "날짜 파싱에 실패했습니다."),
-    ADD_BOOKMARK_ERROR(50004, HttpStatus.INTERNAL_SERVER_ERROR, "게시물 북마크 추가에 실패했습니다.");
+    ADD_BOOKMARK_ERROR(50004, HttpStatus.INTERNAL_SERVER_ERROR, "게시물 북마크 추가에 실패했습니다."),
+    REDIS_CACHE_ERROR(50005, HttpStatus.INTERNAL_SERVER_ERROR, "Redis 캐시 처리에 실패했습니다.");
 
 
 

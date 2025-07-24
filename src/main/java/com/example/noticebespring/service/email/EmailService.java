@@ -4,6 +4,7 @@ import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
 import com.example.noticebespring.common.util.RedisUtil;
 import com.example.noticebespring.dto.email.EmailDto;
+import com.example.noticebespring.dto.email.EmailPostContentDto;
 import com.example.noticebespring.dto.email.EmailVerificationDto;
 import com.example.noticebespring.repository.UserRepository;
 import com.example.noticebespring.entity.User;
@@ -13,6 +14,8 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -49,19 +52,36 @@ public class EmailService {
                 .toString();
     }
 
-    /**
-     * 이메일 내용 초기화
-     * @param code
-     * @return
-     */
-    // 이메일 내용 초기화
-    private String setVerificationEmailContext(String code) {
-        Context context = new Context();
-        context.setVariable("code", code); // 코드 값 템플릿에 전달
 
-        // Thymeleaf 템플릿 파일을 사용하여 HTML 생성
-        return templateEngine.process("verification-email", context);
+
+
+    /**
+     * 인증코드가 담긴 이메일 송신
+     * @param emailDto
+     * @throws MessagingException
+     */
+    public void sendVerificationEmail(EmailDto emailDto) throws MessagingException {
+        String toEmail = emailDto.email();
+        String purpose = "verify";
+        String redisKey = purpose + ":" + toEmail;
+
+        // Redis 설정
+        if (redisUtil.existData(redisKey)) {
+            redisUtil.deleteData(redisKey);
+        }
+
+        String authCode = createCode();
+
+        // Redis 에 해당 인증코드 인증 시간 설정
+        redisUtil.setDataExpire(redisKey, authCode, 60 * 30L);
+
+        // 이메일 폼 생성
+        MimeMessage emailForm = createEmailForm(emailDto, authCode);
+
+        // 이메일 송신
+        javaMailSender.send(emailForm);
     }
+
 
     /**
      * 이메일 폼 생성
@@ -83,32 +103,22 @@ public class EmailService {
         return message;
     }
 
+
     /**
-     * 인증코드가 담긴 이메일 송신
-     * @param emailDto
-     * @throws MessagingException
+     * 이메일 내용 초기화
+     * @param code
+     * @return
      */
-    public void sendEmail(EmailDto emailDto) throws MessagingException {
-        String toEmail = emailDto.email();
-        String purpose = "verify";
-        String redisKey = purpose + ":" + toEmail;
+    // 이메일 내용 초기화
+    private String setVerificationEmailContext(String code) {
+        Context context = new Context();
+        context.setVariable("code", code); // 코드 값 템플릿에 전달
 
-        // Redis 설정
-        if (redisUtil.existData(redisKey)) {
-            redisUtil.deleteData(redisKey);
-        }
-
-        String authCode = createCode();
-
-        // Redis 에 해당 인증코드 인증 시간 설정
-        redisUtil.setDataExpire(redisKey, authCode, 60 * 30L);
-
-        // 이메일 폼 생성
-        MimeMessage emailForm = createEmailForm(emailDto, authCode);
-
-        // 이메일 송신
-        javaMailSender.send(emailForm);
+        // Thymeleaf 템플릿 파일을 사용하여 HTML 생성
+        return templateEngine.process("verification-email", context);
     }
+
+
 
     /**
      * 인증 코드 일치 여부 검증
@@ -142,57 +152,51 @@ public class EmailService {
     }
 
 
-    /**
-     * 새로운 게시물 알림 이메일 내용 초기화
-     * @param postName
-     * @param boardId
-     * @param postTypes
-     * @return
-     */
-    private String setNewPostNotificationEmailContext(String postName, Integer boardId, Map<String, List<Integer>> postTypes) {
-        Context context = new Context();
-        context.setVariable("postName", postName);  // 게시물 이름
-        context.setVariable("boardId", boardId);   // 게시판 ID
-        context.setVariable("postTypes", postTypes); // 게시물 타입과 ID를 템플릿에 전달
 
-        // Thymeleaf 템플릿 파일을 사용하여 HTML 생성
-        return templateEngine.process("new-post-notification-email", context);
+    /**
+     * 새로운 게시물 알림 이메일 송신
+     * @param emailPostContentDto 이메일 수신자 및 게시물 내용 정보
+     * @throws MessagingException
+     */
+    @Async
+    public void sendNewPostNotificationEmail(EmailPostContentDto dto) throws MessagingException {
+        MimeMessage emailForm = createNewPostNotificationEmailForm(dto);
+        javaMailSender.send(emailForm);
+        log.info("New post notification email sent to {}", dto.email());
     }
+
 
     /**
      * 새로운 게시물 알림 이메일 폼 생성
-     * @param emailDto
-     * @param postName
-     * @param boardId
-     * @param postTypes
-     * @return
+     * @param emailPostContentDto 이메일 수신자 및 게시물 내용 정보
+     * @return MimeMessage 객체
      * @throws MessagingException
      */
-    private MimeMessage createNewPostNotificationEmailForm(EmailDto emailDto, String postName, Integer boardId, Map<String, List<Integer>> postTypes) throws MessagingException {
-        String email = emailDto.email();
+    private MimeMessage createNewPostNotificationEmailForm(EmailPostContentDto emailPostContentDto) throws MessagingException {
+        String email = emailPostContentDto.email();
 
         MimeMessage message = javaMailSender.createMimeMessage();
-        message.addRecipients(MimeMessage.RecipientType.TO, email);
-        message.setSubject("새로운 게시물이 등록되었습니다.");
-        message.setFrom(senderEmail);
-        message.setText(setNewPostNotificationEmailContext(postName, boardId, postTypes), "utf-8", "html");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+
+        helper.setTo(email);
+        helper.setSubject("새로운 게시물이 등록되었습니다.");
+        helper.setFrom(senderEmail);
+        helper.setText(setNewPostNotificationEmailContext(emailPostContentDto), true); // HTML 설정
 
         return message;
     }
 
-//    /**
-//     * 새로운 게시물 알림 이메일 송신
-//     * @param boardNewPostDto
-//     * @throws MessagingException
-//     */
-//    public void sendNewPostNotificationEmail(BoardNewPostDto boardNewPostDto) throws MessagingException {
-//        // 이메일 폼 생성
-//        MimeMessage emailForm = createNewPostNotificationEmailForm(emailDto, postName, boardId, postTypes);
-//
-//        // 이메일 송신
-//        javaMailSender.send(emailForm);
-//
-//        log.info("New post notification email sent successfully to {}", emailDto.email());
-//    }
+    /**
+     * 새로운 게시물 알림 이메일 본문 생성 (Thymeleaf HTML 렌더링)
+     * @param emailPostContentDto 이메일 내용 DTO
+     * @return 렌더링된 HTML 문자열
+     */
+    private String setNewPostNotificationEmailContext(EmailPostContentDto emailPostContentDto) {
+        Context context = new Context();
+        context.setVariable("boardName", emailPostContentDto.boardName());
+        context.setVariable("posts", emailPostContentDto.postSummaryList());
+
+        return templateEngine.process("new-post-email", context);
+    }
 
 }
