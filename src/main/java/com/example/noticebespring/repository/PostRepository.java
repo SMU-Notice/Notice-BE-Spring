@@ -29,11 +29,11 @@ public interface PostRepository extends JpaRepository<Post, Integer>, TopViewPos
      */
     @Query("""
     SELECT new com.example.noticebespring.dto.boardSubscription.postNotification.PostSummaryDto(
-        p.board.id, p.id,  p.type, p.title, p.contentSummary, p.postedDate
+        p.board.id, p.id, p.type, p.title, p.contentSummary, p.hasReference, p.url, p.postedDate
     )
     FROM Post p
     WHERE p.id IN :postIds
     ORDER BY p.postedDate DESC
-""")
+    """)
     List<PostSummaryDto> findPostSummariesByPostIds(@Param("postIds") List<Integer> postIds);
 }

@@ -63,11 +63,11 @@ class BoardSubscriptionNotificationServiceMockTest {
         // 또는 정적 팩토리 메서드가 있다면: Board.of(100, "자유게시판");
         when(boardRepository.findById(100)).thenReturn(Optional.of(mockBoard));
 
-        // 3. Mock 게시물 데이터
+        // 3. Mock 게시물 데이터 (hasReference, url 필드 추가)
         List<PostSummaryDto> mockPosts = Arrays.asList(
-                new PostSummaryDto(100, 101, "학사", "학사 공지 1", "내용 요약1", LocalDate.now()),
-                new PostSummaryDto(100, 102, "학사", "학사 공지 2", "내용 요약2", LocalDate.now()),
-                new PostSummaryDto(100, 201, "일반", "일반 게시글 1", "내용 요약3", LocalDate.now())
+                new PostSummaryDto(100, 101, "학사", "학사 공지 1", "내용 요약1", false, "https://example.com/101", LocalDate.now()),
+                new PostSummaryDto(100, 102, "학사", "학사 공지 2", "내용 요약2", true, "https://example.com/102", LocalDate.now()),
+                new PostSummaryDto(100, 201, "일반", "일반 게시글 1", "내용 요약3", false, "https://example.com/201", LocalDate.now())
         );
         when(postRepository.findPostSummariesByPostIds(anyList()))
                 .thenReturn(mockPosts);
@@ -133,9 +133,10 @@ class BoardSubscriptionNotificationServiceMockTest {
                 .build();
         when(boardRepository.findById(100)).thenReturn(Optional.of(mockBoard));
 
+        // hasReference, url 필드 추가
         List<PostSummaryDto> mockPosts = Arrays.asList(
-                new PostSummaryDto(100, 101, "학사", "학사 공지", "내용 요약", LocalDate.now()),
-                new PostSummaryDto(100, 301, "글로벌", "글로벌 공지", "내용 요약", LocalDate.now())
+                new PostSummaryDto(100, 101, "학사", "학사 공지", "내용 요약", true, "https://example.com/101", LocalDate.now()),
+                new PostSummaryDto(100, 301, "글로벌", "글로벌 공지", "내용 요약", false, "https://example.com/301", LocalDate.now())
         );
         when(postRepository.findPostSummariesByPostIds(anyList()))
                 .thenReturn(mockPosts);
@@ -177,8 +178,9 @@ class BoardSubscriptionNotificationServiceMockTest {
                 .build();
         when(boardRepository.findById(100)).thenReturn(Optional.of(mockBoard));
 
+        // hasReference, url 필드 추가
         List<PostSummaryDto> mockPosts = Arrays.asList(
-                new PostSummaryDto(100, 101, "학사", "학사 공지", "내용 요약", LocalDate.now())
+                new PostSummaryDto(100, 101, "학사", "학사 공지", "내용 요약", false, "https://example.com/101", LocalDate.now())
         );
         when(postRepository.findPostSummariesByPostIds(anyList()))
                 .thenReturn(mockPosts);
@@ -214,8 +216,9 @@ class BoardSubscriptionNotificationServiceMockTest {
                 .build();
         when(boardRepository.findById(100)).thenReturn(Optional.of(mockBoard));
 
+        // hasReference, url 필드 추가
         List<PostSummaryDto> mockPosts = Arrays.asList(
-                new PostSummaryDto(100, 101, "학사", "학사 공지", "내용 요약", LocalDate.now())
+                new PostSummaryDto(100, 101, "학사", "학사 공지", "내용 요약", true, "https://example.com/101", LocalDate.now())
         );
         when(postRepository.findPostSummariesByPostIds(anyList()))
                 .thenReturn(mockPosts);

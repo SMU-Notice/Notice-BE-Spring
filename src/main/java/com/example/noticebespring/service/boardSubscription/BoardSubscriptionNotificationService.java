@@ -114,7 +114,7 @@ public class BoardSubscriptionNotificationService {
 
         // 7. 사용자별 구독 정보 그룹화 (userId 기준으로 postType들을 묶음)
         List<UserSubscriptionInfoGroupDto> groupedResult =
-                groupUserSubscriptionInfos(userSubscriptionInfos, requestDto, board.getName(), timestamp);
+                groupUserSubscriptionInfos(userSubscriptionInfos, requestDto, board.getName(), board.getKoreanStringCampus(), timestamp);
         log.info("사용자별 구독 정보 그룹화 완료 - 그룹 수: {}", groupedResult.size());
 
         // 8. Redis에 게시물 정보 캐싱 (이메일 템플릿에서 사용할 데이터)
@@ -174,6 +174,7 @@ public class BoardSubscriptionNotificationService {
      * @param userSubscriptionInfos 구독 정보 리스트 (같은 userId가 여러 개 있을 수 있음)
      * @param requestDto 알림 요청 정보 (postType별 postId 매핑 정보 포함)
      * @param boardName 게시판 이름
+     * @param campus 캠퍼스 정보
      * @param timestamp 알림 생성 시간
      * @return userId별로 그룹화된 알림용 DTO 리스트
      */
@@ -181,10 +182,11 @@ public class BoardSubscriptionNotificationService {
             List<UserSubscriptionInfoDto> userSubscriptionInfos,
             PostNotificationRequestDto requestDto,
             String boardName,
+            String campus,
             String timestamp) {
 
-        log.debug("사용자 구독 정보 그룹화 시작 - 전체 구독 정보 수: {}, 게시판: {}",
-                userSubscriptionInfos.size(), boardName);
+        log.debug("사용자 구독 정보 그룹화 시작 - 전체 구독 정보 수: {}, 게시판: {}, 캠퍼스: {}",
+                userSubscriptionInfos.size(), boardName, campus);
 
         // 사용자별 구독 정보 통계를 위한 Map
         Map<Integer, List<String>> userPostTypeMap = userSubscriptionInfos.stream()
@@ -235,12 +237,13 @@ public class BoardSubscriptionNotificationService {
                                     log.debug("사용자 {} 알림 대상 - postType 수: {}, 총 게시물 수: {}",
                                             first.userId(), postTypes.size(), totalPosts);
 
-                                    // 4. 최종 DTO 생성
+                                    // 4. 최종 DTO 생성 (campus 정보 포함)
                                     UserSubscriptionInfoGroupDto result = new UserSubscriptionInfoGroupDto(
                                             first.userId(),
                                             first.email(),
                                             first.boardId(),
                                             boardName,
+                                            campus,
                                             postTypes,
                                             timestamp
                                     );
@@ -257,5 +260,4 @@ public class BoardSubscriptionNotificationService {
                         dto.postTypes().values().stream().mapToInt(List::size).sum()))
                 .toList(); // List로 변환
     }
-
 }

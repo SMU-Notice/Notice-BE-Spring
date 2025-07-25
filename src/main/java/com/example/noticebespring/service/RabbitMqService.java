@@ -118,6 +118,7 @@ public class RabbitMqService {
         EmailPostContentDto emailDto = new EmailPostContentDto(
                 userSubscriptionInfoGroupDto.email(),
                 userSubscriptionInfoGroupDto.boardName(),
+                userSubscriptionInfoGroupDto.campus(),
                 postSummaries
         );
 

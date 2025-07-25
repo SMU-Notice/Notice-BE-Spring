@@ -8,5 +8,7 @@ public record PostSummaryDto(
         String type,
         String title,
         String contentSummary,
+        Boolean hasReference,
+        String url,
         LocalDate postedDate
 ) {}
