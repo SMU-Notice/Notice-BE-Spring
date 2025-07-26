@@ -8,6 +8,7 @@ public record UserSubscriptionInfoGroupDto(
         String email,
         Integer boardId,
         String boardName,
+        String campus,
         Map<String, List<Integer>> postTypes,
         String timestamp
 ) {}

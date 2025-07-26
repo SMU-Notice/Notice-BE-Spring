@@ -35,11 +35,12 @@ class BoardSubscriptionNotificationServiceTest {
         );
         PostNotificationRequestDto requestDto = new PostNotificationRequestDto(100, postTypesMap);
         String boardName = "자유게시판";
+        String campus = "상명";
         String timestamp = "202506261230";
 
         // When
         List<UserSubscriptionInfoGroupDto> result = boardSubscriptionNotificationService.groupUserSubscriptionInfos(
-                userSubscriptionInfos, requestDto, boardName, timestamp);
+                userSubscriptionInfos, requestDto, boardName, campus, timestamp);
 
         // Then
         assertThat(result).hasSize(1); // 1명의 사용자
@@ -49,6 +50,7 @@ class BoardSubscriptionNotificationServiceTest {
         assertThat(group.email()).isEqualTo("user1@email.com");
         assertThat(group.boardId()).isEqualTo(100);
         assertThat(group.boardName()).isEqualTo("자유게시판");
+        assertThat(group.campus()).isEqualTo("상명");
         assertThat(group.timestamp()).isEqualTo("202506261230");
 
         // 3개 postType 모두 구독 확인
@@ -81,11 +83,12 @@ class BoardSubscriptionNotificationServiceTest {
         );
         PostNotificationRequestDto requestDto = new PostNotificationRequestDto(100, postTypesMap);
         String boardName = "자유게시판";
+        String campus = "서울";
         String timestamp = "202506261230";
 
         // When
         List<UserSubscriptionInfoGroupDto> result = boardSubscriptionNotificationService.groupUserSubscriptionInfos(
-                userSubscriptionInfos, requestDto, boardName, timestamp);
+                userSubscriptionInfos, requestDto, boardName, campus, timestamp);
 
         // Then
         assertThat(result).hasSize(3); // 3명의 사용자
@@ -94,22 +97,25 @@ class BoardSubscriptionNotificationServiceTest {
         List<UserSubscriptionInfoGroupDto> sortedResult = new ArrayList<>(result);
         sortedResult.sort(Comparator.comparing(UserSubscriptionInfoGroupDto::userId));
 
+        // 모든 사용자가 동일한 campus 값을 가져야 함
+        result.forEach(user -> assertThat(user.campus()).isEqualTo("서울"));
+
         // 사용자 1 검증 (학사 + 일반)
-        UserSubscriptionInfoGroupDto user1 = result.get(0);
+        UserSubscriptionInfoGroupDto user1 = sortedResult.get(0);
         assertThat(user1.userId()).isEqualTo(1);
         assertThat(user1.postTypes()).hasSize(2);
         assertThat(user1.postTypes().get("학사")).containsExactly(101, 102);
         assertThat(user1.postTypes().get("일반")).containsExactly(201, 202);
 
         // 사용자 2 검증 (학사 + 글로벌)
-        UserSubscriptionInfoGroupDto user2 = result.get(1);
+        UserSubscriptionInfoGroupDto user2 = sortedResult.get(1);
         assertThat(user2.userId()).isEqualTo(2);
         assertThat(user2.postTypes()).hasSize(2);
         assertThat(user2.postTypes().get("학사")).containsExactly(101, 102);
         assertThat(user2.postTypes().get("글로벌")).containsExactly(301, 302);
 
         // 사용자 3 검증 (일반 + 글로벌)
-        UserSubscriptionInfoGroupDto user3 = result.get(2);
+        UserSubscriptionInfoGroupDto user3 = sortedResult.get(2);
         assertThat(user3.userId()).isEqualTo(3);
         assertThat(user3.postTypes()).hasSize(2);
         assertThat(user3.postTypes().get("일반")).containsExactly(201, 202);
@@ -137,11 +143,12 @@ class BoardSubscriptionNotificationServiceTest {
         );
         PostNotificationRequestDto requestDto = new PostNotificationRequestDto(100, postTypesMap);
         String boardName = "자유게시판";
+        String campus = "상명";
         String timestamp = "202506261230";
 
         // When
         List<UserSubscriptionInfoGroupDto> result = boardSubscriptionNotificationService.groupUserSubscriptionInfos(
-                userSubscriptionInfos, requestDto, boardName, timestamp);
+                userSubscriptionInfos, requestDto, boardName, campus, timestamp);
 
         // Then
         assertThat(result).hasSize(3); // 3명의 사용자
@@ -150,8 +157,11 @@ class BoardSubscriptionNotificationServiceTest {
         List<UserSubscriptionInfoGroupDto> sortedResult = new ArrayList<>(result);
         sortedResult.sort(Comparator.comparing(UserSubscriptionInfoGroupDto::userId));
 
+        // 모든 사용자가 동일한 campus 값을 가져야 함
+        result.forEach(user -> assertThat(user.campus()).isEqualTo("상명"));
+
         // 사용자 1: 전체 구독자 검증
-        UserSubscriptionInfoGroupDto user1 = result.get(0);
+        UserSubscriptionInfoGroupDto user1 = sortedResult.get(0);
         assertThat(user1.userId()).isEqualTo(1);
         assertThat(user1.postTypes()).hasSize(3); // 모든 타입 구독
         assertThat(user1.postTypes().get("학사")).containsExactly(101, 102);
@@ -159,13 +169,13 @@ class BoardSubscriptionNotificationServiceTest {
         assertThat(user1.postTypes().get("글로벌")).containsExactly(301, 302);
 
         // 사용자 2: 학사만 구독 검증
-        UserSubscriptionInfoGroupDto user2 = result.get(1);
+        UserSubscriptionInfoGroupDto user2 = sortedResult.get(1);
         assertThat(user2.userId()).isEqualTo(2);
         assertThat(user2.postTypes()).hasSize(1);
         assertThat(user2.postTypes().get("학사")).containsExactly(101, 102);
 
         // 사용자 3: 글로벌만 구독 검증
-        UserSubscriptionInfoGroupDto user3 = result.get(2);
+        UserSubscriptionInfoGroupDto user3 = sortedResult.get(2);
         assertThat(user3.userId()).isEqualTo(3);
         assertThat(user3.postTypes()).hasSize(1);
         assertThat(user3.postTypes().get("글로벌")).containsExactly(301, 302);

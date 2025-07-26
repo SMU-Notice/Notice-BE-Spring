@@ -194,6 +194,7 @@ public class EmailService {
     private String setNewPostNotificationEmailContext(EmailPostContentDto emailPostContentDto) {
         Context context = new Context();
         context.setVariable("boardName", emailPostContentDto.boardName());
+        context.setVariable("campus", emailPostContentDto.campus());
         context.setVariable("posts", emailPostContentDto.postSummaryList());
 
         return templateEngine.process("new-post-email", context);

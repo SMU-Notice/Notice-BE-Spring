@@ -7,6 +7,7 @@ import java.util.List;
 public record EmailPostContentDto(
         String email,
         String boardName,
+        String campus,
         List<PostSummaryDto> postSummaryList
 ) {}
 
