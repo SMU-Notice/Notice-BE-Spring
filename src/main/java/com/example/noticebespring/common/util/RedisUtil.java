@@ -34,7 +34,7 @@ public class RedisUtil {
     }
 
     /**
-     * 데이터 만료 기한 설정
+     * 데이터 저장 및 데이터 만료 기한 설정
      * @param key
      * @param value
      * @param duration

@@ -19,10 +19,10 @@ public class PostPicture {
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "post_id", nullable = false) //사진이 있던 게시글
     private Post post;
-    
+
     @Column(columnDefinition = "TEXT", nullable = false) //사진 URL
     private String url;
-    
+
     @Column(name = "picture_summary", columnDefinition = "TEXT") //사진 요약
     private String pictureSummary;
 }

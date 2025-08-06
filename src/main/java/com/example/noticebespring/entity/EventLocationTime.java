@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
+@Table(name = "event_location_time")
 @Getter
 @Builder
-@Table(name = "event_location_time")
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventLocationTime {
@@ -26,22 +26,24 @@ public class EventLocationTime {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(name = "location", nullable = false)
+    @Column(name = "location", length = 30)
     private String location;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_time")
     private LocalTime startTime;
 
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "end_time")
     private LocalTime endTime;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }
+

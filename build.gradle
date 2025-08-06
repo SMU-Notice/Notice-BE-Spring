@@ -70,9 +70,19 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// RabbitMQ
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+	// Jackson (JSON 직렬화/역직렬화)
+	implementation("com.fasterxml.jackson.core:jackson-databind")
+
 	//AWS Parameter Store
 	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0")
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
+
+	// ConstructorBinding
+	implementation 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
