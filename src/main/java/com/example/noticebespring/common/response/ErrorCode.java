@@ -54,7 +54,9 @@ public enum ErrorCode {
     POST_RETRIEVAL_ERROR(50002, HttpStatus.INTERNAL_SERVER_ERROR, "게시물 조회에 실패했습니다."),
     DATE_PARSING_ERROR(50003, HttpStatus.INTERNAL_SERVER_ERROR, "날짜 파싱에 실패했습니다."),
     ADD_BOOKMARK_ERROR(50004, HttpStatus.INTERNAL_SERVER_ERROR, "게시물 북마크 추가에 실패했습니다."),
-    REDIS_CACHE_ERROR(50005, HttpStatus.INTERNAL_SERVER_ERROR, "Redis 캐시 처리에 실패했습니다.");
+    REDIS_CACHE_ERROR(50005, HttpStatus.INTERNAL_SERVER_ERROR, "Redis 캐시 처리에 실패했습니다."),
+    EVENT_RETRIEVAL_ERROR(50006,HttpStatus.INTERNAL_SERVER_ERROR, "이벤트 조회에 실패했습니다.");
+
 
 
 
