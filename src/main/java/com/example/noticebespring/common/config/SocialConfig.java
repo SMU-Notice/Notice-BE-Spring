@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(SocialConfig.class)
-@ConfigurationProperties(prefix = "social")
+@ConfigurationProperties(prefix = "spring.social")
 @Data
 @Slf4j
 public class SocialConfig {

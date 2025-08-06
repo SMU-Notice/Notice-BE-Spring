@@ -114,7 +114,7 @@ public class AllNoticePostRepositoryCustomImpl implements AllNoticePostRepositor
 
             return posts;
         } catch (Exception e){
-            System.err.println("Error in findRecent7Posts: " + e.getMessage());
+            System.err.println("Error in findFilterPosts: " + e.getMessage());
             throw new CustomException(ErrorCode.POST_RETRIEVAL_ERROR);
         }
     }
