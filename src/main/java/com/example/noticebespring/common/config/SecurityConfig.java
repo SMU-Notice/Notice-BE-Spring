@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**","/v3/api-docs", "/v3/api-docs/**", "/api-docs/**", "/api/test001").permitAll()
                         .requestMatchers("/api/v1", "/favicon.ico").permitAll()
-                        .requestMatchers("/api/rabbit-mq/**", "api/board-subscription/new-posts").permitAll()
+                        .requestMatchers("/api/rabbit-mq/**", "/api/board-subscription/new-posts").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
