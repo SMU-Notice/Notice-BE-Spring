@@ -5,11 +5,11 @@ import com.example.noticebespring.common.response.ErrorCode;
 import com.example.noticebespring.dto.PostItemDto;
 import com.example.noticebespring.repository.Qrepository.post.AllNoticePostRepositoryCustom;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 
 @Slf4j
@@ -22,19 +22,20 @@ public class AllNoticeService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostItemDto> getAllFilteredPosts(Integer userId, Pageable pageable, String boardName, String postType, String searchTerm,
+    public Page<PostItemDto> getAllFilteredPosts(Integer userId, Pageable pageable, String boardName, String postType, String searchTerm,
                                                  String startDate, String endDate){
         log.debug("모든 공지 게시물 조회 - user: {}, boardName: {}, postType: {}, searchTerm: {}, startDate: {}, endDate: {}",
                 userId, boardName, postType, searchTerm, startDate, endDate);
 
         try {
-            List<PostItemDto> posts = postRepository.findFilterPosts(userId, pageable, boardName, postType, searchTerm, startDate, endDate);
+            Page<PostItemDto> posts = postRepository.findFilterPosts(userId, pageable, boardName, postType, searchTerm, startDate, endDate);
 
             if(posts.isEmpty()){
                 log.debug("조건을 만족하는 게시물이 없음 - user : {}, boardName : {}, postType : {}, searchTerm : {}, startDate: {}, endDate: {}",
                         userId, boardName, postType,searchTerm, startDate, endDate);
             } else{
-                log.info("모든 공지 게시물 조회 성공 - user: {}, postCount: {}", userId, posts.size());
+                log.info("모든 공지 게시물 조회 성공 - user: {}, pageContentCount: {}, totalElements: {}",
+                        userId, posts.getNumberOfElements(), posts.getTotalElements());
             }
             return posts;
         } catch (Exception e){

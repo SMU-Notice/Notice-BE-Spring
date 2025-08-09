@@ -3,21 +3,18 @@ package com.example.noticebespring.repository.Qrepository.post;
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
 import com.example.noticebespring.dto.PostItemDto;
-import com.example.noticebespring.entity.Board;
 import com.example.noticebespring.entity.QBoard;
 import com.example.noticebespring.entity.QBookmark;
 import com.example.noticebespring.entity.QPost;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -26,7 +23,6 @@ public class AllNoticePostRepositoryCustomImpl implements AllNoticePostRepositor
 
     private final JPAQueryFactory queryFactory;
     private final QPost post = QPost.post;
-    private final QBoard board = QBoard.board;
     private final QBookmark bookmark = QBookmark.bookmark;
 
     public AllNoticePostRepositoryCustomImpl(JPAQueryFactory queryFactory) {
@@ -72,7 +68,7 @@ public class AllNoticePostRepositoryCustomImpl implements AllNoticePostRepositor
 
     //필터에 따른 페이징된 게시물 반환
     @Override
-    public List<PostItemDto> findFilterPosts(Integer userId, Pageable pageable, String boardName,
+    public Page<PostItemDto> findFilterPosts(Integer userId, Pageable pageable, String boardName,
                                              String postType, String searchTerm, String startDate, String endDate) {
 
         //게시물 북마크 여부 확인
@@ -96,9 +92,7 @@ public class AllNoticePostRepositoryCustomImpl implements AllNoticePostRepositor
                             JPAExpressions.selectOne().from(bookmark)
                                     .where(isBookmarkedCondition)
                                     .exists(),
-                            JPAExpressions.selectOne().from(post)
-                                    .where(isPostedTodayCondition)
-                                    .exists()
+                            isPostedTodayCondition
                     ))
                     .from(post)
                     .where(
@@ -112,7 +106,22 @@ public class AllNoticePostRepositoryCustomImpl implements AllNoticePostRepositor
                     .limit(pageable.getPageSize())
                     .fetch();
 
-            return posts;
+            // 전체 페이지 수 카운트 쿼리
+            Long total = queryFactory
+                    .select(post.count())
+                    .from(post)
+                    .where(
+                            boardNameEquals(boardName),
+                            postTypeEquals(postType),
+                            titleContains(searchTerm),
+                            postedDateBetween(startDate, endDate)
+                    )
+                    .fetchOne();
+
+            long totalCount = (total == null) ? 0L : total;
+
+            return new PageImpl<>(posts, pageable, totalCount);
+
         } catch (Exception e){
             System.err.println("Error in findFilterPosts: " + e.getMessage());
             throw new CustomException(ErrorCode.POST_RETRIEVAL_ERROR);
