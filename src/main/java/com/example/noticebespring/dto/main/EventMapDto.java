@@ -18,8 +18,11 @@ public record EventMapDto(
         @Schema(description = "원문 url")
         String url,
 
-        @Schema(description = "게시 날짜")
-        LocalDate postedDate,
+        @Schema(description = "시작 날짜")
+        LocalDate startDate,
+
+        @Schema(description = "종료 날짜")
+        LocalDate endDate,
 
         @Schema(description = "게시물 북마크 여부")
         Boolean isBookmarked
