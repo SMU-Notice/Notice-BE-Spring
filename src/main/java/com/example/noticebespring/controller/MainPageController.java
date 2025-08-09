@@ -291,7 +291,8 @@ public class MainPageController {
                                                              "title": "[한미교육위원단] 2026-2027년도 풀브라이트 미국 대학원 유학 및 포스트닥 장학 프로그램 안내",
                                                              "viewCount": 1939,
                                                              "hasReference": true,
-                                                             "postedDate": "2025-03-18",
+                                                             "startDate": "2025-03-18",
+                                                             "endDate": "2025-03-21",
                                                              "isBookmarked": false,
                                                              "isPostedToday": true
                                                          },
@@ -301,7 +302,8 @@ public class MainPageController {
                                                              "title": "[중랑구] 패션봉제실무 및 창업·마케팅 교육 수강생 모집 안내",
                                                              "viewCount": 1398,
                                                              "hasReference": true,
-                                                             "postedDate": "2025-03-16",
+                                                             "startDate": "2025-03-19",
+                                                             "endDate": "2025-03-24",
                                                              "isBookmarked": false,
                                                              "isPostedToday": false
                                                          },
@@ -311,7 +313,8 @@ public class MainPageController {
                                                              "title": "[학생복지팀] 25 상반기 재단법인 춘천시민장학재단 봄내장학생 선발 안내",
                                                              "viewCount": 2003,
                                                              "hasReference": true,
-                                                             "postedDate": "2025-03-14",
+                                                             "startDate": "2025-03-25",
+                                                             "endDate": "2025-03-28",
                                                              "isBookmarked": false,
                                                              "isPostedToday": false
                                                          },
@@ -321,7 +324,8 @@ public class MainPageController {
                                                              "title": "2025년 상반기 민주화운동기념사업회 청년인턴 채용 공고 홍보 안내",
                                                              "viewCount": 1662,
                                                              "hasReference": true,
-                                                             "postedDate": "2025-03-12",
+                                                             "startDate": "2025-04-10",
+                                                             "endDate": "2025-04-12",
                                                              "isBookmarked": false,
                                                              "isPostedToday": false
                                                          },
@@ -331,7 +335,8 @@ public class MainPageController {
                                                              "title": "[경기콘텐츠진흥원] 2025년 경기게임아카데미 창업과정 14기 모집 안내",
                                                              "viewCount": 1431,
                                                              "hasReference": true,
-                                                             "postedDate": "2025-03-10",
+                                                             "startDate": "2025-04-18",
+                                                             "endDate": "2025-04-20",
                                                              "isBookmarked": false,
                                                              "isPostedToday": false
                                                          },
@@ -341,7 +346,8 @@ public class MainPageController {
                                                              "title": "[세종특별자치시] 2025년 세종특별자치시 공공데이터 활용 창업경진대회",
                                                              "viewCount": 1531,
                                                              "hasReference": true,
-                                                             "postedDate": "2025-03-08",
+                                                             "startDate": "2025-04-19",
+                                                             "endDate": "2025-04-22",
                                                              "isBookmarked": false,
                                                              "isPostedToday": false
                                                          },
@@ -351,7 +357,8 @@ public class MainPageController {
                                                              "title": "[자유전공학부대학] 2025학년도 자유전공학부대학 선후배이어주기 재학생 멘토모집",
                                                              "viewCount": 2844,
                                                              "hasReference": true,
-                                                             "postedDate": "2025-03-05",
+                                                             "startDate": "2025-04-25",
+                                                             "endDate": "2025-04-30",
                                                              "isBookmarked": false,
                                                              "isPostedToday": false
                                                          }
