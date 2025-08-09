@@ -15,12 +15,6 @@ public record EventMapDto(
         @Schema(description = "이벤트가 포함된 게시물 제목", example = "[학생복지팀] 2024학년도 2학기 기말고사 응원행사 천원의 아침밥 학생처가 쏜다 시행 안내")
         String title,
 
-        @Schema(description = "게시물의 요약 본문")
-        String contentSummary,
-
-        @Schema(description = "원문 게시물의 조회수")
-        Integer viewCount,
-
         @Schema(description = "원문 url")
         String url,
 
