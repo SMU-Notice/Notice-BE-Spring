@@ -39,8 +39,6 @@ public class EventLocationTimeRepositoryCustomImpl implements EventLocationTimeR
                             post.id,
                             event.location,
                             post.title,
-                            post.contentSummary,
-                            post.viewCount,
                             post.url,
                             post.postedDate,
                             JPAExpressions.selectOne().from(bookmark)
