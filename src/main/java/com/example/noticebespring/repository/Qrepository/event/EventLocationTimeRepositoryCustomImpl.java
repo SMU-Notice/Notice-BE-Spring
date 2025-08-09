@@ -40,7 +40,8 @@ public class EventLocationTimeRepositoryCustomImpl implements EventLocationTimeR
                             event.location,
                             post.title,
                             post.url,
-                            post.postedDate,
+                            event.startDate,
+                            event.endDate,
                             JPAExpressions.selectOne().from(bookmark)
                                     .where(isBookmarkedCondition)
                                     .exists()
