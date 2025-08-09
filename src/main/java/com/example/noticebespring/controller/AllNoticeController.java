@@ -16,12 +16,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+
 
 @Slf4j
 @RestController
@@ -233,28 +234,34 @@ public class AllNoticeController {
         Pageable pageable = PageRequest.of(page, size);
         Integer userId = userService.getAuthenticatedUser().getId();
 
-        boolean hasFilters = boardName != null || postType != null || searchTerm != null || startDate != null || endDate != null;
+        boolean hasFilters =
+                (boardName != null && !boardName.isBlank()) ||
+                        (postType != null && !postType.isBlank()) ||
+                        (searchTerm != null && !searchTerm.isBlank()) ||
+                        (startDate != null && !startDate.isBlank()) ||
+                        (endDate != null && !endDate.isBlank());
 
         try{
-            List<PostItemDto> posts = allNoticeService.getAllFilteredPosts(userId, pageable, boardName, postType, searchTerm, startDate, endDate);
+            Page<PostItemDto> pageResult = allNoticeService.getAllFilteredPosts(userId, pageable, boardName, postType, searchTerm, startDate, endDate);
 
-            Integer totalCount = posts.size(); // 전체 게시물 수
-            Integer totalPages = (int) Math.ceil((double) totalCount / size); // size는 pageSize
+            int totalPages = pageResult.getTotalPages();
+            List<PostItemDto> posts = pageResult.getContent();
 
-            if(posts.isEmpty()){
-                if(hasFilters) {
+            if (posts.isEmpty()) {
+                if (hasFilters) {
                     log.info("조건에 맞는 게시물 존재하지 않음 - user: {}, boardName: {}, postType: {}, searchTerm: {}, startDate: {}, endDate: {}",
                             userId, boardName, postType, searchTerm, startDate, endDate);
-                }else{
+                } else {
                     log.info("게시물이 존재하지 않음 - user: {}", userId);
                 }
-                totalPages = 1;
-            }
-            if(hasFilters) {
-                log.info("조건에 맞는 게시물 조회 성공 - user: {}, postCount: {}, boardName: {}, postType: {}, searchTerm: {}, startDate: {}, endDate: {}",
-                        userId, posts.size(), boardName, postType, searchTerm, startDate, endDate);
-            }else{
-                log.info("전체 게시물 조회 성공 - user: {}, postCount: {}", userId, posts.size());
+            } else {
+                if (hasFilters) {
+                    log.info("조건에 맞는 게시물 조회 성공 - user: {}, pageContentCount: {}, totalPages: {}, boardName: {}, postType: {}, searchTerm: {}, startDate: {}, endDate: {}",
+                            userId, posts.size(), totalPages, boardName, postType, searchTerm, startDate, endDate);
+                } else {
+                    log.info("전체 게시물 조회 성공 - user: {}, pageContentCount: {}, totalPages: {}",
+                            userId, posts.size(), totalPages);
+                }
             }
 
             //전체 페이지 수 + 조회된 게시물 리스트

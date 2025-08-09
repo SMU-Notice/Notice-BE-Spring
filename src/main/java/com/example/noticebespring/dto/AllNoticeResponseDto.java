@@ -7,7 +7,7 @@ import java.util.List;
 @Schema(description = "모든 공지 페이지 응답 DTO")
 public record AllNoticeResponseDto(
         @Schema(description = "전체 페이지 수")
-        int totalPages,
+        Integer totalPages,
         @Schema(description = "조회된 게시물 목록")
         List<PostItemDto> posts
 ) {
