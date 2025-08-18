@@ -42,9 +42,7 @@ public class RecentNoticePostRepositoryCustomImpl implements RecentNoticePostRep
                             post.hasReference,
                             post.postedDate,
                             Expressions.asBoolean(false),
-                            JPAExpressions.selectOne().from(post)
-                                    .where(isPostedTodayCondition)
-                                    .exists()
+                            isPostedTodayCondition
                     )).from(post)
                     .orderBy(post.postedDate.desc())
                     .limit(7)
