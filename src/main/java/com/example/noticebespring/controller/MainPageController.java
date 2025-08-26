@@ -3,7 +3,10 @@ package com.example.noticebespring.controller;
 import com.example.noticebespring.common.response.CommonResponse;
 import com.example.noticebespring.common.response.ErrorCode;
 import com.example.noticebespring.dto.PostItemDto;
+import com.example.noticebespring.dto.main.EventMapDto;
 import com.example.noticebespring.dto.main.TopViewDto;
+import com.example.noticebespring.service.auth.UserService;
+import com.example.noticebespring.service.mainpage.EventMapService;
 import com.example.noticebespring.service.mainpage.RecentNoticeService;
 import com.example.noticebespring.service.mainpage.TopViewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -21,19 +25,17 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/main")
+@RequiredArgsConstructor
 @Tag(name = "메인 API", description = "메인 페이지 API (월간 인기 공지, 모든 공지)")
 public class MainPageController {
     private final RecentNoticeService recentNoticeService;
     private final TopViewService topViewService;
-
-    public MainPageController(RecentNoticeService recentNoticeService, TopViewService topViewService) {
-        this.recentNoticeService = recentNoticeService;
-        this.topViewService = topViewService;
-    }
+    private final EventMapService eventMapService;
+    private final UserService userService;
 
     @Operation(
-            summary = "월간 인기 공지 조회",
-            description = "최근 30일 동안 '통합 공지'에서의 조회수 상위 7개 게시물 조회",
+            summary = "월간 인기 공지 조회 ",
+            description = "최근 30일 동안 '통합 공지'에서의 조회수 상위 7개 게시물 조회 ",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(
@@ -130,17 +132,16 @@ public class MainPageController {
         try {
             List<TopViewDto> topViewDtoList = topViewService.getTop7PostsByBoardName("통합공지");
             return CommonResponse.ok(topViewDtoList);
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e){
             return CommonResponse.fail(ErrorCode.NOT_FOUND_POST);
         } catch (Exception e) {
             return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
-
     @Operation(
-            summary = "모든 공지 조회",
-            description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회",
+            summary = "모든 공지 조회 ",
+            description = "메인 페이지에서 모든 공지의 최근 7개 게시물 조회 ",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회 성공", content = {
                             @Content(
@@ -269,6 +270,86 @@ public class MainPageController {
         } catch (EntityNotFoundException e) {
             return CommonResponse.fail(ErrorCode.NOT_FOUND_POST);
         } catch (Exception e) {
+            return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(
+            summary = "지도 이벤트 조회 ",
+            description = "오늘 날짜 기준으로 종료되지 않은(진행 예정이거나 현재 진행 중인) 이벤트 조회",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                                {
+                                                     "success": true,
+                                                     "data": [
+                                                         {
+                                                             "id": 1288,
+                                                             "location": "학생회관",
+                                                             "title": "[DUMMY] 학생회관 신입생 오리엔테이션 안내",
+                                                             "url": "https://notice.smu.ac.kr/dummy/1001",
+                                                             "startDate": "2025-03-18",
+                                                             "endDate": "2025-03-21",
+                                                             "isBookmarked": false,
+                                                         },
+                                                         {
+                                                             "id": 1289,
+                                                             "location": "학술정보관",
+                                                             "title": "[DUMMY] 학술정보관 특별 세미나 개최",
+                                                             "url": "https://notice.smu.ac.kr/dummy/2001",
+                                                             "startDate": "2025-08-08",
+                                                             "endDate": "2025-12-12",
+                                                             "isBookmarked": false,
+                                                         },
+                                                         {
+                                                             "id": 1290,
+                                                             "location": "미술관",
+                                                             "title": "[DUMMY] 미술관 졸업작품 전시회",
+                                                             "url": "https://notice.smu.ac.kr/dummy/3001",
+                                                             "startDate": "2025-08-09",
+                                                             "endDate": "2025-12-13",
+                                                             "isBookmarked": false,
+                                                         }
+                                                     ],
+                                                     "error": null
+                                                 }
+                                                }
+                                            """)
+                            )
+                    }),
+                    @ApiResponse(responseCode = "500", description = "활성화된 이벤트 조회에 대한 내부 오류", content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(example = """
+                                                {
+                                                    "success": false,
+                                                    "data": null,
+                                                    "error": {
+                                                        "errorCode": "50000",
+                                                        "message": "서버 내부 오류입니다."
+                                                    }
+                                                }
+                                            """)
+                            )
+                    })
+            },
+            parameters = {
+                    @Parameter(name = "Authorization", description = "Authorization 헤더에 JWT 토큰 추가", in = ParameterIn.HEADER, required = true)
+            }
+    )
+    @GetMapping("/event")
+    public CommonResponse<List<EventMapDto>> getMapEvents(){
+        Integer userId = userService.getAuthenticatedUser().getId();
+        try{
+            List<EventMapDto> events = eventMapService.getEventsVisibleOnMap(userId);
+            if (events.isEmpty()){
+                log.info("활성화된 이벤트가 존재하지 않음 - {}개", events.size());
+            }
+            return CommonResponse.ok(events);
+        } catch (Exception e){
+            log.error("서버 내부 오류 발생 - user: {}, error: {}", userId, e.getMessage());
             return CommonResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }

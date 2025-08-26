@@ -35,6 +35,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         ErrorCode errorCode = getErrorCode(authException);
 
+        if(errorCode.getCode().equals(40101)) {
+            log.error("[40101 UNAUTHORIZED] 인증 실패 - URI: {}, 원인: {}", request.getRequestURI(), authException.getClass().getSimpleName());
+        }
+
         CommonResponse<?> commonResponse = CommonResponse.fail(errorCode);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -48,23 +52,23 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         Throwable cause = authException.getCause();
 
         if (cause == null) {
-            log.error("Authentication Failed - cause not found", authException);
+            log.warn("Authentication Failed - cause not found", authException);
             return ErrorCode.UNAUTHORIZED;
         }
         else if (cause instanceof ExpiredJwtException) {
-            log.error("JWT token expired", cause);
+            log.warn("JWT token expired", cause);
             return ErrorCode.JWT_TOKEN_EXPIRED;
         } else if (cause instanceof SignatureException) {
-            log.error("JWT signature invalid", cause);
+            log.warn("JWT signature invalid", cause);
             return ErrorCode.JWT_SIGNATURE_INVALID;
         } else if (cause instanceof MalformedJwtException) {
-            log.error("JWT malformed", cause);
+            log.warn("JWT malformed", cause);
             return ErrorCode.JWT_TOKEN_ERROR;
         } else if (cause instanceof IllegalArgumentException) {
-            log.error("Invalid JWT token or header", cause);
+            log.warn("Invalid JWT token or header", cause);
             return ErrorCode.UNAUTHORIZED;
         } else {
-            log.error("JWT authentication failed", cause);
+            log.warn("JWT authentication failed", cause);
             return ErrorCode.UNAUTHORIZED;
         }
     }

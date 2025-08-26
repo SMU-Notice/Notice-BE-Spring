@@ -1,4 +1,4 @@
-package com.example.noticebespring.service;
+package com.example.noticebespring.service.boardSubscription;
 
 import com.example.noticebespring.common.response.CustomException;
 import com.example.noticebespring.common.response.ErrorCode;
@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class BoardSubscriptionService {
+public class BoardSubscriptionManagementService {
 
-    private final BoardSubscriptionRepository boardSubscriptionRepository;
     private final UserService userService;
+    private final BoardSubscriptionRepository boardSubscriptionRepository;
 
     public SubscriptionResponseDto getSubscriptions() {
         // 인증된 사용자 가져오기 (인증된 사용자 정보를 가져오는 메서드가 있다고 가정)
@@ -183,15 +183,5 @@ public class BoardSubscriptionService {
         return "구독이 모두 취소되었습니다.";
 
     }
-
-
-
-    // board_id, post_type 에 id로 조회
-
-    // 조회 햇는데 id 가 없다면 에러 반환
-
-    // board_id, post_type  에 id 이메일로 전송
-
-    //
 
 }

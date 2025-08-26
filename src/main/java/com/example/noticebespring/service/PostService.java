@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.example.noticebespring.repository.BookmarkRepository;
+import com.example.noticebespring.service.auth.UserService;
+
 
 
 @Service	
@@ -20,6 +23,9 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostPictureRepository postPictureRepository;
+    
+    private final BookmarkRepository bookmarkRepository;
+    private final UserService userService;
 
     /**
      * 게시글 상세 정보를 조회
@@ -32,9 +38,16 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
         
         
-        // 북마크 여부 초기는 false로 설정
+        // 북마크 여부 초기는 false로 설정, 사용자의 북마크 여부 확인
         boolean isBookmarked = false;
-
+        try {
+            Integer userId = userService.getAuthenticatedUser().getId();
+            isBookmarked =
+                bookmarkRepository.existsByBookmarkFolder_User_IdAndPostId(userId, postId);
+        } catch (CustomException ex) {
+            // 토큰 없거나 만료 시  북마크 false 로 간주하고 계속 진행
+        } 
+        
         
         Post previous = postRepository
                 .findFirstByIdLessThanOrderByIdDesc(postId)
@@ -43,6 +56,9 @@ public class PostService {
         Post next = postRepository
                 .findFirstByIdGreaterThanOrderByIdAsc(postId)
                 .orElse(null);
+        
+        String name = post.getBoard().getName(); //게시판 이름(notion 참고)
+        String type = post.getType(); //학사 일반 사회봉사 등등 값 들어가고, 메인게시판이 아닌경우 default값 들어가게 됨
         
         //해당 게시글 모든 사진 조회
         List<PostPicture> pictures = postPictureRepository.findByPost_Id(postId);
@@ -70,6 +86,8 @@ public class PostService {
                 .pictureSummary(pictureSummary)
                 .viewCount(post.getViewCount())
                 .postedDate(post.getPostedDate())
+                .name(name)
+                .type(type)
                 .previousPostId(previous != null ? previous.getId() : null)
                 .previousPostTitle(previous != null ? previous.getTitle() : null)
                 .nextPostId(next != null ? next.getId()    : null)

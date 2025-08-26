@@ -54,6 +54,7 @@ public class TopViewPostRepositoryCustomImpl implements TopViewPostRepositoryCus
     public List<TopViewDto> findTop7PostsByBoardName(String boardName) {
         return baseQuery()
                 .where(postedDateInRecentDays().and(boardNameEquals(boardName)))
+//                .where(boardNameEquals(boardName))
                 .orderBy(post.viewCount.desc())
                 .limit(7)
                 .fetch();

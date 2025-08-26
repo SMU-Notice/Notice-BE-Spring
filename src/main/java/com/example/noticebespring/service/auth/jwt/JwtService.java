@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 import java.util.Queue;
 
 // JWT 토큰 발급 및 검증을 담당
@@ -20,85 +21,50 @@ import java.util.Queue;
 @Service
 public class JwtService {
     private final SecretKeyManager secretKeyManager;
-
     private final JwtProperties jwtProperties;
+
     public JwtService(SecretKeyManager secretKeyManager, JwtProperties jwtProperties) {
         this.secretKeyManager = secretKeyManager;
         this.jwtProperties = jwtProperties;
     }
 
-    public String generateToken(Integer userId, String email){
-        SecretKey key = secretKeyManager.getCurrentKey();
-        return Jwts.builder()
+    // JWT 토큰 생성
+    public String generateToken(Integer userId) {
+        log.debug("Generating JWT token for userId: {}", userId);
+        SecretKey key = secretKeyManager.getSecretKey();
+        String token = Jwts.builder()
                 .subject(String.valueOf(userId))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(key)
                 .compact();
+//        log.info("Generated token: {}", token);
+        return token;
     }
 
-    public boolean isTokenValid(String token){
-        SecretKey currentKey = secretKeyManager.getCurrentKey();
-        Queue<SecretKey> previousKeys = secretKeyManager.getPreviousKeys();
-
-        // 현재키로 유효성 검증
-        if (isTokenValidWithKey(token, currentKey)){
-            return true;
-        }
-
-        //이전키로 유효성 검증
-        for (SecretKey prekey : previousKeys){
-            if (isTokenValidWithKey(token, prekey)){
-                return true;
-            }
-        }
-        return false;
+    // JWT 토큰 유효성 검사 (현재 키 + 이전 키 리스트 포함)
+    public boolean isTokenValid(String token) {
+        log.debug("Validating JWT token");
+        return secretKeyManager.validateToken(token);
     }
 
-    private boolean isTokenValidWithKey(String token, SecretKey key){
-        try {
-            Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-            return true;
-        } catch (ExpiredJwtException | SignatureException | MalformedJwtException | SecurityException | IllegalArgumentException e) {
-            log.warn("JWT validation failed", e);
-            return false;
-        }
-    }
-
-    public String extractToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7); // "Bearer " 이후의 토큰 반환
-        }
-        return null;
-    }
-
+    // JWT에서 사용자 ID 추출
     public Integer extractUserId(String token) {
-        SecretKey key = secretKeyManager.getCurrentKey();
+        log.debug("Extracting user ID from token");
         try {
             Claims claims = Jwts.parser()
-                    .verifyWith(key)
+                    .verifyWith(secretKeyManager.getSecretKey())
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-            String subject = claims.getSubject();
-            if (subject == null || !subject.matches("\\d+")) {
-                CustomException ex = new CustomException(ErrorCode.JWT_TOKEN_ERROR);
-                log.warn("Invalid JWT subject format: {}", subject, ex);
-                throw ex;
-            }
-            return Integer.valueOf(subject);
+            return Integer.valueOf(claims.getSubject());
         } catch (ExpiredJwtException e) {
-            log.warn("JWT has expired ", e);
+            log.warn("JWT has expired", e);
             throw new CustomException(ErrorCode.JWT_TOKEN_EXPIRED);
         } catch (SignatureException | MalformedJwtException | SecurityException | IllegalArgumentException e) {
             log.warn("JWT signature or structure error", e);
             throw new CustomException(ErrorCode.JWT_TOKEN_ERROR);
         }
     }
-
 }
+
